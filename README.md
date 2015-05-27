@@ -20,7 +20,7 @@ Currently, though only the Splitter EIP is implemented.
 ## Route Configuration
 
 Route Configuration can be done either programmatically or using JSON. The following is an example of a route containing a splitter node and two logger nodes.
-The route starts with a direct endpoint is defined that listens on the EvventBus on the address `address-0`.
+The route starts with a direct endpoint is defined that listens on the EventBus on the address `address-0`.
 Outgoing messages from the route are sent out on the EventBus to the addresses `route-output` and `sub-route-output`.
 
 
