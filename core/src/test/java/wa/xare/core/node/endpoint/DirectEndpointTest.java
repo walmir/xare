@@ -1,6 +1,7 @@
 package wa.xare.core.node.endpoint;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
@@ -67,13 +68,13 @@ public class DirectEndpointTest {
 		reset(eventBus);
 		endpoint.direction = EndpointDirection.INCOMING;
 		endpoint.deliverOutgoingMessage(msg);
-		verify(eventBus, never()).send(anyObject(), anyObject());
+		verify(eventBus, never()).send(anyString(), anyObject());
 	}
 
 	@Test
 	public void testDeployAsIncomingEndpoint() throws Exception {
 		endpoint.deploy();
 		verify(endpoint).deployAsIncomingEndpoint();
-		verify(eventBus).registerHandler(any(), any());
+		verify(eventBus).registerHandler(anyString(), anyObject());
 	}
 }
