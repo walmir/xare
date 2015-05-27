@@ -1,0 +1,19 @@
+{
+
+  // Java verticle
+  // "main":"wa.xare.core.DefaultRoute",
+
+  
+
+  // If your module is going to be registered in the Vert.x module registry you will also need the following
+  // mandatory fields
+  "description":"Xare is an integration framework built on top of Vert.x",
+  "licenses": ["The Apache Software License Version 2.0"],
+  "author": "Wajdi Almir",
+
+  // Optional fields
+  "keywords": ["eip", "inegration", "routing", "endpoint"],
+  "homepage": "non.yet",
+
+  "auto-redeploy": true
+}
