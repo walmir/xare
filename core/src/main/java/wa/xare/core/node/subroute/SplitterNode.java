@@ -1,7 +1,5 @@
 package wa.xare.core.node.subroute;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -57,7 +55,10 @@ public class SplitterNode extends DefaultSubRouteNode {
     prepareNodeChain();
 
     Object selection = getSelection(packet);
-    assertNotNull("no items could be selected for splitting", selection);
+    
+    if (selection == null){
+    	throw new ProcessingException("no items could be selected for splitting");
+    }
 
     List<Object> splitItems = null;
     if (selection instanceof JsonArray) {

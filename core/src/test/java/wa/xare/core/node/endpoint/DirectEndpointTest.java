@@ -2,7 +2,6 @@ package wa.xare.core.node.endpoint;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -15,14 +14,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.vertx.java.core.Handler;
 import org.vertx.java.core.Vertx;
 import org.vertx.java.core.eventbus.EventBus;
 import org.vertx.java.core.logging.Logger;
 import org.vertx.java.platform.Container;
 
 import wa.xare.core.DefaultRoute;
-import wa.xare.core.node.endpoint.DirectEndpoint;
-import wa.xare.core.node.endpoint.EndpointDirection;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DirectEndpointTest {
@@ -68,13 +66,13 @@ public class DirectEndpointTest {
 		reset(eventBus);
 		endpoint.direction = EndpointDirection.INCOMING;
 		endpoint.deliverOutgoingMessage(msg);
-		verify(eventBus, never()).send(anyString(), anyObject());
+		verify(eventBus, never()).send(anyString(), any(Handler.class));
 	}
 
 	@Test
 	public void testDeployAsIncomingEndpoint() throws Exception {
 		endpoint.deploy();
 		verify(endpoint).deployAsIncomingEndpoint();
-		verify(eventBus).registerHandler(anyString(), anyObject());
+		verify(eventBus).registerHandler(anyString(), any());
 	}
 }
