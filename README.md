@@ -17,6 +17,11 @@ This type of endpoints receives or sends messages directly from or to the Vert.x
 A goal of this project is to implement as many of the Enterprise Integration Patterns from the book by Gregor Hohpe and Bobby Woolf as possible.
 Currently, though only the Splitter EIP is implemented.
 
+## Selectors
+
+A selector can be used by route nodes to select the part of a packet that is to be processed by the node. A selector can be configured by setting an expression language (currently only JsonPath is supported) and a selection expression.
+In the example below, the splitter attempts to select a books list, while the logger node the splitters sub-route selects the book title to be logged out.
+
 ## Route Configuration
 
 Route Configuration can be done either programmatically or using JSON. The following is an example of a route containing a splitter node and two logger nodes.
@@ -72,10 +77,12 @@ Outgoing messages from the route are sent out on the EventBus to the addresses `
 }
 ```
 
-## Selector
+## Route Deployment
 
-A selector can be used by route nodes to select the part of a packet that is to be processed by the node. A selector can be configured by setting an expression language (currently only JsonPath is supported) and a selection expression.
-In the example above, the splitter attempts to select a books list, while the logger node the splitters sub-route selects the book title to be logged out.
+Deploying a route programmatically can be done with the following call:
+```
+container.deployWorkerVerticle(DefaultRoute.class.getName(), routeConfig);
+```
 
 
 ## Next Steps:
