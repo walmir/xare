@@ -16,25 +16,25 @@ public class LoggerNode extends DefaultRouteNode {
 	public static final String TRACE = "trace";
 	public static final String ERROR = "error";
 
-  private Logger logger;
+	private Logger logger;
 
 	private String level = INFO;
 
 
 	@Override
 	public void startProcessing(Packet packet) {
-    Object message;
+		Object message;
 
-    Selector selector = getSelector();
-    if (selector != null) {
-      message = selector.getSelection(packet);
-    } else {
-      message = packet.getBody();
-    }
+		Selector selector = getSelector();
+		if (selector != null) {
+			message = selector.getSelection(packet);
+		} else {
+			message = packet.getBody();
+		}
 
 		switch (level) {
 		case INFO:
-      logger.info("LOGGER-NODE: " + message);
+			logger.info("LOGGER-NODE: " + message);
 			break;
 		case DEBUG:
 			logger.debug(message);
@@ -54,7 +54,7 @@ public class LoggerNode extends DefaultRouteNode {
 		}
 
 		ProcessingResult result = ProcessingResult
-		    .successfulProcessingResult(packet);
+				.successfulProcessingResult(packet);
 		notifyProcessingListeners(result);
 	}
 

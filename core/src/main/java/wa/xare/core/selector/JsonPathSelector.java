@@ -8,9 +8,7 @@ import org.vertx.java.core.json.JsonObject;
 
 import wa.xare.core.packet.Packet;
 
-import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.Option;
 
 public class JsonPathSelector extends AbstractSelector {
 
@@ -20,7 +18,26 @@ public class JsonPathSelector extends AbstractSelector {
 
   @Override
   public Object getSelection(Packet packet) {
+    Object selectedSegment = getSelectionSegment(packet);
+    Object selection = JsonPath.read(selectedSegment.toString(),
+        getExpression());
 
+    return prepareSelection(selection);
+  }
+
+  private Object prepareSelection(Object selection) {
+    if (selection != null) {
+      if (selection instanceof JSONArray) {
+        JSONArray array = (JSONArray) selection;
+        return new JsonArray(array.toJSONString());
+      } else if (selection instanceof String) {
+        return selection;
+      }
+    }
+    return null;
+  }
+
+  private Object getSelectionSegment(Packet packet) {
     JsonElement object = null;
 
     switch (getSegment()) {
@@ -37,27 +54,7 @@ public class JsonPathSelector extends AbstractSelector {
       break;
     }
 
-    Configuration conf = Configuration.defaultConfiguration();
-    conf.setOptions(Option.ALWAYS_RETURN_LIST);
-    System.out.println(object);
-    Object selection = JsonPath.using(conf).parse(object.toString())
-        .read(getExpression());
-
-    if (selection != null) {
-      if (selection instanceof JSONArray){
-        JSONArray array = (JSONArray) selection;
-        return new JsonArray(array.toJSONString());
-      } else if (selection instanceof String){
-        return selection;
-      }
-    }
-
-    return null;
-    // Object selection = object == null ? null : JsonPath.using(conf).read(
-    // object.toString(),
-    // getExpression());
-
-
+    return object;
   }
 
 }

@@ -1,14 +1,33 @@
 package wa.xare.core.selector;
 
+import org.vertx.java.core.json.JsonArray;
+
 import wa.xare.core.packet.Packet;
 import wa.xare.core.packet.PacketSegment;
 
 public interface Selector {
 
-	void setSegment(PacketSegment segment);
+  /**
+   * Set the segment from which an element is selected.
+   * 
+   * @param segment
+   *          either {@link PacketSegment#BODY} or {@link PacketSegment#HEADERS}
+   */
+  void setSegment(PacketSegment segment);
 
-	void setExpression(String expression);
+  /**
+   * Set the expression used to select an element out of the packet.
+   * 
+   * @param expression
+   */
+  void setExpression(String expression);
 
-	Object getSelection(Packet packet);
+  /**
+   * 
+   * @param packet
+   * @return A string if one item is selected or a {@link JsonArray} if multiple
+   *         items are found
+   */
+  Object getSelection(Packet packet);
 
 }

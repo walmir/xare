@@ -52,7 +52,7 @@ public class SplitterNode extends DefaultSubRouteNode {
   @Override
   @SuppressWarnings("unchecked")
   public void startProcessing(Packet packet) {
-    prepareNodeChain();
+    checkNodeChain();
 
     Object selection = getSelection(packet);
     
@@ -87,7 +87,7 @@ public class SplitterNode extends DefaultSubRouteNode {
     traverse(subpacket);
   }
 
-  private void prepareNodeChain() {
+  private void checkNodeChain() {
     ProcessingChain chain = getNodeChain();
 
     if (chain == null) {
@@ -98,7 +98,6 @@ public class SplitterNode extends DefaultSubRouteNode {
           "node processing chain cannot be empty.");
     }
 
-    getNodeChain().addProcessingListener(this::notifyProcessingListeners);
   }
 
   private List<List<Object>> createGroups(List<Object> splitItems) {

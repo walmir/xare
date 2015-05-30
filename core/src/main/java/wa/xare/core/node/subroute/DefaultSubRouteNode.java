@@ -8,7 +8,6 @@ import wa.xare.core.node.DefaultNodeProcessingChain;
 import wa.xare.core.node.DefaultRouteNode;
 import wa.xare.core.node.Node;
 import wa.xare.core.packet.Packet;
-import wa.xare.core.selector.Selector;
 
 /**
  * Represents a node that starts a subroute that is traversed independently from
@@ -19,7 +18,6 @@ import wa.xare.core.selector.Selector;
 public abstract class DefaultSubRouteNode extends DefaultRouteNode implements
     ProcessingChain {
 
-  private Selector selector;
 
   private ProcessingChain nodeChain;
 
@@ -27,6 +25,7 @@ public abstract class DefaultSubRouteNode extends DefaultRouteNode implements
   public void addNode(Node node) {
     if (nodeChain == null) {
       nodeChain = new DefaultNodeProcessingChain();
+      nodeChain.addProcessingListener(this::notifyProcessingListeners);
     }
     nodeChain.addNode(node);
   }

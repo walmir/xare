@@ -47,6 +47,10 @@ public class DefaultNodeProcessingChain implements ProcessingChain {
   public void traverse(Packet packet) {
     if (nodes != null && !nodes.isEmpty()) {
       nodes.get(0).startProcessing(packet);
+    } else {
+      ProcessingResult result = ProcessingResult
+          .successfulProcessingResult(packet);
+      notifyProcessingListeners(result);
     }
   }
 
