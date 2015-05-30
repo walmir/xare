@@ -1,0 +1,12 @@
+/target/
+.classpath
+.project
+.settings
+.springBeans
+.DS_Store
+bin
+target
+*.cache.*
+gwt-unitCache
+deploy
+*.log*
