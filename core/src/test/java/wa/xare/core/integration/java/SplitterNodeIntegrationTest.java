@@ -62,7 +62,7 @@ public class SplitterNodeIntegrationTest extends TestVerticle {
 
   private void configureAndDeployRoute() {
     String bookSelector = "$.books";
-    String titleSelector = "$..title";
+    String titleSelector = "$.title";
 
     NodeConfiguration logNodeConfig = new NodeConfiguration();
     logNodeConfig.setType(NodeType.LOGGER);
@@ -112,7 +112,6 @@ public class SplitterNodeIntegrationTest extends TestVerticle {
     rConfig.addNodeConfiguration(splitNodeConfig);
     rConfig.addNodeConfiguration(finalNode);
 
-    System.out.println(rConfig);
     container.deployWorkerVerticle(DefaultRoute.class.getName(), rConfig, 1,
         false, r -> {
           if (r.succeeded()) {

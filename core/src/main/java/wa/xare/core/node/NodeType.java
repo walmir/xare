@@ -7,7 +7,8 @@ public enum NodeType {
 
   ENDPOINT("endpoint"), 
   LOGGER("logger"), 
-  SPLITTER("splitter");
+  SPLITTER("splitter"), 
+  FILTER("filter");
 
   private String name;
 

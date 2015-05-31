@@ -8,7 +8,7 @@ public class FilterNode extends DefaultSubRouteNode {
 	
 	
 	@Override
-	public void startProcessing(Packet packet) {
+  public void doProcess(Packet packet) {
     Object selection = getSelector().getSelection(packet);
     if (selection != null) {
       if (selection instanceof String ||

@@ -51,7 +51,7 @@ public class SplitterNode extends DefaultSubRouteNode {
 
   @Override
   @SuppressWarnings("unchecked")
-  public void startProcessing(Packet packet) {
+  public void doProcess(Packet packet) {
     checkNodeChain();
 
     Object selection = getSelection(packet);
