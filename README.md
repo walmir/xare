@@ -12,10 +12,20 @@ Routes communicate with the world through endpoints. Once deployed, the route li
 Currently only one type of Endpoints is implemneted, namely `direct-endpoint`.
 This type of endpoints receives or sends messages directly from or to the Vert.x `EventBus`. 
 
-## Enterprise Integration Patters (EIPs)
+## Enterprise Integration Patterns (EIPs)
 
 A goal of this project is to implement as many of the Enterprise Integration Patterns from the book by Gregor Hohpe and Bobby Woolf as possible.
-Currently, though only the Splitter EIP is implemented.
+Currently the following EIPs are implemented.
+
+*   Splitter: splits an array into single items and passes them on to the next node.
+*   Filter: only passes packets on that fulfill a given predicate.
+
+
+### Next EIPs:
+
+* Choice (Message Router)
+* Aggregator
+
 
 ## Selectors
 
@@ -56,7 +66,7 @@ Outgoing messages from the route are sent out on the EventBus to the addresses `
           "loglevel":"info",
           "selector":{  
             "expression-language":"jsonPath",
-            "expression":"$..title"
+            "expression":"$.title"
           }
         },
         {  
