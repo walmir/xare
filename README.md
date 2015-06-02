@@ -2,12 +2,12 @@
 
 Xare is an integration framework build on top of vert.x. Currently, it is in the very early stages with only very few EIPs implemented.
 
-Xare allows for routes to be deployed as Vert.x verticals, thus running independently of one another.
+Xare allows routes to be deployed as Vert.x worker verticals, thus running as micro-services, completely independently of one another. The key advantage is that routes can be added, removed and edited on the fly, without downtime and without affecting the rest of the system.
 
 
 ## Endpoints
 
-Routes communicate with the world through endpoints. Once deployed, the route listens to messages received by its incoming-endpoint.
+Routes communicate with the world and each other through endpoints. Once deployed, the route listens to messages received by its incoming-endpoint, and can pass messages on through one or more outgoing endpoints.
 
 Currently only one type of Endpoints is implemneted, namely `direct-endpoint`.
 This type of endpoints receives or sends messages directly from or to the Vert.x `EventBus`. 
@@ -35,7 +35,7 @@ In the example below, the splitter attempts to select a books list, while the lo
 ## Route Configuration
 
 Route Configuration can be done either programmatically or using JSON. The following is an example of a route containing a splitter node and two logger nodes.
-The route starts with a direct endpoint is defined that listens on the EventBus on the address `address-0`.
+The route starts with a direct endpoint that listens on the EventBus on the address `address-0`.
 Outgoing messages from the route are sent out on the EventBus to the addresses `route-output` and `sub-route-output`.
 
 
