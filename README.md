@@ -7,19 +7,25 @@ Xare allows routes to be deployed as Vert.x worker verticals, thus running as mi
 
 ## Endpoints
 
-Routes communicate with the world and each other through endpoints. Once deployed, the route listens to messages received by its incoming-endpoint, and can pass messages on through one or more outgoing endpoints.
+Routes communicate with the world and each other through endpoints. Once deployed, the route listens to messages received by its incoming-endpoint, and can pass messages on through one or more outgoing endpoints. \n
 
 Currently only one type of Endpoints is implemneted, namely `direct-endpoint`.
-This type of endpoints receives or sends messages directly from or to the Vert.x `EventBus`. 
+This type of endpoints receives or sends messages directly from or to the Vert.x `EventBus`. \n
+
+Route have a single incoming endpoint but can have multiple outgoing ones, if there are sub-routes.
 
 ## Enterprise Integration Patterns (EIPs)
 
 A goal of this project is to implement as many of the Enterprise Integration Patterns from the book by Gregor Hohpe and Bobby Woolf as possible.
+EIPs are implemented as `Nodes` that make up a route. \n
 Currently the following EIPs are implemented.
 
 *   Splitter: splits an array into single items and passes them on to the next node.
 *   Filter: only passes packets on that fulfill a given predicate.
 
+### Sub-route Nodes
+
+Nodes like filter and splitter that pass only part of incoming packets on the next node in the route start a sub-route to process the packets they pass on. This way the main route is allowed to process all the complete packets if needed.
 
 ### Next EIPs:
 
