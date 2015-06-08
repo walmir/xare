@@ -3,11 +3,13 @@ package wa.xare.core.node;
 import java.util.Optional;
 
 import org.vertx.java.core.json.JsonArray;
+import org.vertx.java.core.json.JsonElement;
 import org.vertx.java.core.json.JsonObject;
 
 import wa.xare.core.Route;
 import wa.xare.core.node.endpoint.EndpointBuilder;
 import wa.xare.core.node.endpoint.EndpointConfiguration;
+import wa.xare.core.node.subroute.ChoiceNode;
 import wa.xare.core.node.subroute.DefaultSubRouteNode;
 import wa.xare.core.node.subroute.FilterNode;
 import wa.xare.core.node.subroute.SplitterNode;
@@ -41,6 +43,9 @@ public class NodeBuilder {
     case FILTER:
       node = filter(nodeConfig);
       break;
+    case CHOICE:
+      node = choice(nodeConfig);
+      break;
     default:
       node = null;
       break;
@@ -55,6 +60,40 @@ public class NodeBuilder {
       ((DefaultRouteNode) node).setSelector(selector);
     }
 
+    return node;
+  }
+
+  private Node choice(NodeConfiguration nodeConfig) {
+    ChoiceNode node = choice();
+    JsonElement whereElement = nodeConfig.getElement("cases");
+    if (whereElement instanceof JsonArray) {
+      ((JsonArray) whereElement).iterator().forEachRemaining(
+          whereNodeConfig -> {
+            NodeConfiguration filterConfig = new NodeConfiguration(
+                (JsonObject) whereNodeConfig);
+            filterConfig.setType(NodeType.FILTER);
+            Node filter = buildNode(filterConfig);
+            node.addNode(filter);
+          });
+    } else { // JsonObject
+      Node filter = filter(new NodeConfiguration((JsonObject) whereElement));
+      node.addNode(filter);
+    }
+    JsonArray otherwisePathConfig = nodeConfig.getArray("otherwise");
+    if (otherwisePathConfig != null) {
+      DefaultNodeProcessingChain chain = new DefaultNodeProcessingChain();
+      
+      otherwisePathConfig.forEach(conf -> {
+        chain.addNode(buildNode(new NodeConfiguration((JsonObject) conf)));
+            });
+      node.setOtherwise(chain);
+    }
+    return node;
+  }
+
+  private ChoiceNode choice() {
+    ChoiceNode node = new ChoiceNode();
+    node.setRoute(route);
     return node;
   }
 

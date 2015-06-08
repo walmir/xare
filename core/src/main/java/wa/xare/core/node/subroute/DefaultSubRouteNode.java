@@ -19,7 +19,6 @@ import wa.xare.core.packet.Packet;
 public abstract class DefaultSubRouteNode extends DefaultRouteNode implements
     ProcessingChain {
 
-
   private ProcessingChain nodeChain;
 
   @Override
@@ -56,6 +55,6 @@ public abstract class DefaultSubRouteNode extends DefaultRouteNode implements
         .successfulProcessingResult(packet));
   }
 
-  public abstract void doProcess(Packet packet);
+  abstract void doProcess(Packet packet);
 
 }
