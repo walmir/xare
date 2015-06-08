@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.vertx.testtools.VertxAssert.fail;
 import static org.vertx.testtools.VertxAssert.testComplete;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.vertx.java.core.json.JsonArray;
 import org.vertx.java.core.json.JsonObject;
@@ -38,7 +37,6 @@ public class FilterNodeIntegrationTest extends TestVerticle {
   private Packet secondPacket;
   private String expression = "$.[?(@.author=='" + RIGHT_AUTHOR + "')]";
 
-  @Before
   public void prepareNode() {
     wrongBook = new JsonObject();
     wrongBook.putString(AUTHOR, WRONG_AUTHOR);
@@ -54,7 +52,7 @@ public class FilterNodeIntegrationTest extends TestVerticle {
   }
 
   @Test
-  public void testSomething() throws Exception {
+  public void testFilterNode() throws Exception {
     prepareNode();
 
     vertx.eventBus().registerHandler(OUT_ADDRESS, message -> {
