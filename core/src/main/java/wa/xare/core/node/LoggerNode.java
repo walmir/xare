@@ -6,7 +6,7 @@ import wa.xare.core.Route;
 import wa.xare.core.packet.Packet;
 import wa.xare.core.selector.Selector;
 
-public class LoggerNode extends DefaultRouteNode {
+public class LoggerNode extends AbstractNode {
 
 	public static final String LOG_LEVEL_FIELD = "loglevel";
 

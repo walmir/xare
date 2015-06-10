@@ -8,17 +8,17 @@ import static org.mockito.Mockito.verify;
 import org.junit.Before;
 import org.junit.Test;
 
-import wa.xare.core.node.DefaultRouteNode;
+import wa.xare.core.node.AbstractNode;
 import wa.xare.core.node.ProcessingListener;
 import wa.xare.core.node.ProcessingResult;
 
-public class DefaultRouteNodeTest {
+public class AbstractNodeTest {
 
-	DefaultRouteNode node;
+	AbstractNode node;
 
 	@Before
 	public void prepare() {
-		node = spy(DefaultRouteNode.class);
+		node = spy(AbstractNode.class);
 	}
 
 	@Test

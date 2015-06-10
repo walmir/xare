@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.vertx.java.core.json.JsonArray;
 
-import wa.xare.core.ProcessingChain;
+import wa.xare.core.node.PipelineNode;
 import wa.xare.core.node.ProcessingException;
 import wa.xare.core.packet.Packet;
 import wa.xare.core.packet.PacketBuilder;
@@ -88,12 +88,12 @@ public class SplitterNode extends DefaultSubRouteNode {
   }
 
   private void checkNodeChain() {
-    ProcessingChain chain = getNodeChain();
+    PipelineNode pipeline = getPipline();
 
-    if (chain == null) {
+    if (pipeline == null) {
       throw new IllegalStateException(
           "node processing chain cannot be null or empty.");
-    } else if (chain.getNodes().isEmpty()) {
+    } else if (pipeline.getNodes().isEmpty()) {
       throw new IllegalStateException(
           "node processing chain cannot be empty.");
     }

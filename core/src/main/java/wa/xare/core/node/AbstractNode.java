@@ -6,7 +6,7 @@ import java.util.List;
 import wa.xare.core.Route;
 import wa.xare.core.selector.Selector;
 
-public abstract class DefaultRouteNode implements Node {
+public abstract class AbstractNode implements Node {
 
 	private List<ProcessingListener> listeners;
 

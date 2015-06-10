@@ -10,7 +10,7 @@ public class FilterNode extends DefaultSubRouteNode {
 	@Override
   public void doProcess(Packet packet) {
     if (passesFilter(packet)) {
-      getNodeChain().traverse(packet);
+      getPipline().startProcessing(packet);
     }
     // do nothing -> filter packet out
   }

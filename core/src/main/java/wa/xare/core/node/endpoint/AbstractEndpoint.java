@@ -1,10 +1,10 @@
 package wa.xare.core.node.endpoint;
 
 import wa.xare.core.Route;
-import wa.xare.core.node.DefaultRouteNode;
+import wa.xare.core.node.AbstractNode;
 import wa.xare.core.packet.Packet;
 
-public abstract class AbstractEndpoint extends DefaultRouteNode implements
+public abstract class AbstractEndpoint extends AbstractNode implements
     Endpoint {
 
 	protected EndpointDirection direction;

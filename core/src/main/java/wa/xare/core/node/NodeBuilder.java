@@ -57,7 +57,7 @@ public class NodeBuilder {
           nodeConfig.getObject(NodeConfiguration.SELECTOR_CONFIG_FIELD));
       SelectorBuilder builder = new SelectorBuilder();
       Selector selector = builder.buildSelector(selectorConfig);
-      ((DefaultRouteNode) node).setSelector(selector);
+      ((AbstractNode) node).setSelector(selector);
     }
 
     return node;
@@ -81,7 +81,7 @@ public class NodeBuilder {
     }
     JsonArray otherwisePathConfig = nodeConfig.getArray("otherwise");
     if (otherwisePathConfig != null) {
-      DefaultNodeProcessingChain chain = new DefaultNodeProcessingChain();
+      PipelineNode chain = new PipelineNode();
       
       otherwisePathConfig.forEach(conf -> {
         chain.addNode(buildNode(new NodeConfiguration((JsonObject) conf)));

@@ -11,9 +11,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.vertx.java.core.json.JsonObject;
 
-import wa.xare.core.ProcessingChain;
-import wa.xare.core.node.DefaultNodeProcessingChain;
 import wa.xare.core.node.Node;
+import wa.xare.core.node.PipelineNode;
 import wa.xare.core.packet.DefaultPacket;
 import wa.xare.core.packet.Packet;
 import wa.xare.core.selector.JsonPathSelector;
@@ -41,10 +40,10 @@ public class ChoiceNodeTest {
   @Before
   public void prepare() {
     node = new ChoiceNode();
-    ProcessingChain otherwiseChain = new DefaultNodeProcessingChain();
-    otherwiseChain.addNode(afterOtherwise);
+    PipelineNode otherwisePipeline = new PipelineNode();
+    otherwisePipeline.addNode(afterOtherwise);
 
-    node.setOtherwise(otherwiseChain);
+    node.setOtherwise(otherwisePipeline);
 
     Selector s1 = new JsonPathSelector("$.[?(@.value==1)]");
     Selector s2 = new JsonPathSelector("$.[?(@.value==2)]");

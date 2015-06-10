@@ -5,10 +5,10 @@ import java.util.List;
 import org.vertx.java.core.logging.Logger;
 import org.vertx.java.platform.Verticle;
 
-import wa.xare.core.node.DefaultNodeProcessingChain;
 import wa.xare.core.node.Node;
 import wa.xare.core.node.NodeBuilder;
 import wa.xare.core.node.NodeConfiguration;
+import wa.xare.core.node.PipelineNode;
 import wa.xare.core.node.endpoint.Endpoint;
 import wa.xare.core.node.endpoint.EndpointBuilder;
 import wa.xare.core.node.endpoint.EndpointConfiguration;
@@ -24,7 +24,7 @@ public class DefaultRoute extends Verticle implements Route {
 
   private Endpoint incomingEndpoint;
 
-  private ProcessingChain nodeChain;
+  private PipelineNode pipeline;
 
   public Endpoint getIncomingEndpoint() {
     return incomingEndpoint;
@@ -34,8 +34,8 @@ public class DefaultRoute extends Verticle implements Route {
     this.incomingEndpoint = incomingEndpoint;
   }
 
-  public List<Node> getNodeChain() {
-    return nodeChain.getNodes();
+  public List<Node> getPipeline() {
+    return pipeline.getNodes();
   }
 
   public void setNodes(List<Node> nodes) {
@@ -48,11 +48,11 @@ public class DefaultRoute extends Verticle implements Route {
     if (node == null) {
       throw new IllegalArgumentException("node cannot be null");
     }
-    if (nodeChain == null) {
-      nodeChain = new DefaultNodeProcessingChain();
+    if (pipeline == null) {
+      pipeline = new PipelineNode();
     }
     node.setRoute(this);
-    nodeChain.addNode(node);
+    pipeline.addNode(node);
   }
 
   public void setName(String name) {
@@ -88,7 +88,7 @@ public class DefaultRoute extends Verticle implements Route {
     List<NodeConfiguration> nodeConfigs = routeConfig.getNodeConfigurations();
     configureNodes(nodeConfigs);
 
-    nodeChain.addProcessingListener(result -> {
+    pipeline.addProcessingListener(result -> {
       endRoute(result.isSuccessful(), result.getResultingPacket());
     });
 
@@ -102,28 +102,25 @@ public class DefaultRoute extends Verticle implements Route {
 
   private void configureNodes(List<NodeConfiguration> nodeConfigs) {
     NodeBuilder builder = new NodeBuilder(this);
-
     for (NodeConfiguration nc : nodeConfigs) {
       logger.info("Node " + nc);
       this.addNode(builder.buildNode(nc));
     }
-
-    // prepareNodeChain();
   }
 
   private void configureIncomingEndpoint(EndpointConfiguration inpointConfig) {
     this.incomingEndpoint = endpointBuilder.buildEndpoint(inpointConfig);
     if (incomingEndpoint != null) {
-      if (nodeChain == null) {
+      if (pipeline == null) {
         throw new IllegalStateException("processing chain cannot be null");
       }
-      incomingEndpoint.setHandler(nodeChain::traverse);
+      incomingEndpoint.setHandler(pipeline::startProcessing);
       incomingEndpoint.deploy();
     }
   }
 
-  public void setProcessingChain(ProcessingChain processingChain) {
-    nodeChain = processingChain;
+  public void setPipline(PipelineNode pipeline) {
+    this.pipeline = pipeline;
   }
 
 }

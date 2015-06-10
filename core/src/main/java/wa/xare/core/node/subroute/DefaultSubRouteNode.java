@@ -4,9 +4,9 @@ import java.util.Collections;
 import java.util.List;
 
 import wa.xare.core.ProcessingChain;
-import wa.xare.core.node.DefaultNodeProcessingChain;
-import wa.xare.core.node.DefaultRouteNode;
+import wa.xare.core.node.AbstractNode;
 import wa.xare.core.node.Node;
+import wa.xare.core.node.PipelineNode;
 import wa.xare.core.node.ProcessingResult;
 import wa.xare.core.packet.Packet;
 
@@ -16,36 +16,36 @@ import wa.xare.core.packet.Packet;
  * 
  * @author Wajdi
  */
-public abstract class DefaultSubRouteNode extends DefaultRouteNode implements
+public abstract class DefaultSubRouteNode extends AbstractNode implements
     ProcessingChain {
 
-  private ProcessingChain nodeChain;
+  private PipelineNode pipline;
 
   @Override
   public void addNode(Node node) {
-    if (nodeChain == null) {
-      nodeChain = new DefaultNodeProcessingChain();
-      nodeChain.addProcessingListener(this::notifyProcessingListeners);
+    if (pipline == null) {
+      pipline = new PipelineNode();
+      pipline.addProcessingListener(this::notifyProcessingListeners);
     }
-    nodeChain.addNode(node);
+    pipline.addNode(node);
   }
 
   @Override
   public void traverse(Packet packet) {
-    nodeChain.traverse(packet);
+    pipline.startProcessing(packet);
   }
 
   @Override
   public List<Node> getNodes() {
-    return nodeChain == null ? Collections.emptyList() : nodeChain.getNodes();
+    return pipline == null ? Collections.emptyList() : pipline.getNodes();
   }
 
-  public ProcessingChain getNodeChain() {
-    return nodeChain;
+  public PipelineNode getPipline() {
+    return pipline;
   }
 
-  public void setNodeChain(ProcessingChain nodeChain) {
-    this.nodeChain = nodeChain;
+  public void setPipline(PipelineNode pipeline) {
+    this.pipline = pipeline;
   }
 
   @Override

@@ -15,7 +15,7 @@ import org.vertx.java.platform.Container;
 
 import wa.xare.core.DefaultRoute;
 import wa.xare.core.RouteConfiguration;
-import wa.xare.core.node.DefaultRouteNode;
+import wa.xare.core.node.AbstractNode;
 import wa.xare.core.node.ProcessingResult;
 import wa.xare.core.node.endpoint.EndpointConfiguration;
 import wa.xare.core.node.endpoint.EndpointDirection;
@@ -87,7 +87,7 @@ public class DefaultRouteTest {
 		// throw new RuntimeException("not yet implemented");
 	}
 
-	public class GoodNode extends DefaultRouteNode {
+	public class GoodNode extends AbstractNode {
 
 		@Override
 		public void startProcessing(Packet packet) {
@@ -97,7 +97,7 @@ public class DefaultRouteTest {
 
 	}
 
-	public class BadNode extends DefaultRouteNode {
+	public class BadNode extends AbstractNode {
 
 		@Override
 		public void startProcessing(Packet packet) {

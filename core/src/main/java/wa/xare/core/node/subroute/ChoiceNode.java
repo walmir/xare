@@ -4,23 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import wa.xare.core.ProcessingChain;
-import wa.xare.core.node.DefaultNodeProcessingChain;
 import wa.xare.core.node.Node;
+import wa.xare.core.node.PipelineNode;
 import wa.xare.core.packet.Packet;
 
 public class ChoiceNode extends DefaultSubRouteNode {
 
   private List<FilterNode> whereNodes;
 
-  private ProcessingChain otherwise;
+  private PipelineNode otherwise;
 
   public ChoiceNode() {
     whereNodes = new ArrayList<>();
-    otherwise = new DefaultNodeProcessingChain();
+    otherwise = new PipelineNode();
   }
 
-  public ChoiceNode(ProcessingChain otherwiseChain) {
+  public ChoiceNode(PipelineNode otherwiseChain) {
     if (otherwise == null) {
       throw new IllegalArgumentException(
           "'otherwise' node chain cannot be null");
@@ -36,7 +35,7 @@ public class ChoiceNode extends DefaultSubRouteNode {
     if (nodeOption.isPresent()) {
       nodeOption.get().startProcessing(packet);
     } else {
-      otherwise.traverse(packet);
+      otherwise.startProcessing(packet);
     }
   }
 
@@ -50,7 +49,7 @@ public class ChoiceNode extends DefaultSubRouteNode {
     }
   }
 
-  public void setOtherwise(ProcessingChain chain) {
+  public void setOtherwise(PipelineNode chain) {
     otherwise = chain;
   }
 
