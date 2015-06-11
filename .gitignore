@@ -10,3 +10,5 @@ target
 gwt-unitCache
 deploy
 *.log*
+.idea/
+*.iml
