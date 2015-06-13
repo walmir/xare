@@ -8,6 +8,6 @@ Xare routes are deployed as Vert.x worker verticals, allowing the lifecycle of a
 
 ## Read more:
 * [Getting started](docs/getting_started.md)
-* [User Manual](doc/user_manual.md)
+* [User Manual](docs/user_manual.md)
 * [Developer Manual](docs/dev_manual.md)
 * [Examples](docs/examples.md)
