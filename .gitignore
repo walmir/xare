@@ -12,3 +12,8 @@ deploy
 *.log*
 .idea/
 *.iml
+*.ipr
+*.iws
+.gradle/
+build/
+mods/

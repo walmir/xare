@@ -1,6 +1,15 @@
-# User Manual
+# User Guide
+
 
 this is a work in progress...
+This guide serves as 
+
+
+## Getting started
+
+Download Xare project directy from GitHub. A release for the Vert.x Module repository is in the works.
+
+
 
 
 ## Endpoints
@@ -44,51 +53,7 @@ Outgoing messages from the route are sent out on the EventBus to the addresses `
 
 
 ```
-{  
-  "name":"the-route",
-  "from":{  
-    "type":"endpoint",
-    "address":"address-0",
-    "direction":"incoming",
-    "endpointType":"direct"
-  },
-  "nodes":[  
-    {  
-      "type":"logger",
-      "loglevel":"info"
-    },
-    {  
-      "type":"splitter",
-      "selector":{  
-        "expression-language":"jsonPath",
-        "segment":"body",
-        "expression":"$.books"
-      },
-      "nodes":[  
-        {  
-          "type":"logger",
-          "loglevel":"info",
-          "selector":{  
-            "expression-language":"jsonPath",
-            "expression":"$.title"
-          }
-        },
-        {  
-          "type":"endpoint",
-          "address":"sub-route-output",
-          "direction":"outgoing",
-          "endpointType":"direct"
-        }
-      ]
-    },
-    {  
-      "type":"endpoint",
-      "address":"route-output",
-      "direction":"outgoing",
-      "endpointType":"direct"
-    }
-  ]
-}
+
 ```
 
 ## Route Deployment
