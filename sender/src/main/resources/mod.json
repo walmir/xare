@@ -1,0 +1,20 @@
+{
+
+  // Java verticle
+  "main":"wa.xare.sender.SenderVerticle",
+
+
+
+  // If your module is going to be registered in the Vert.x module registry you will also need the following
+  // mandatory fields
+  "description":"Put description of your module here",
+  "licenses": ["The Apache Software License Version 2.0"],
+  "author": "Joe Bloggs",
+
+  // Optional fields
+  "developers": ["walmir"],
+  "keywords": ["pizza", "awesomeness", "much", "chocolate", "xare", "example"],
+  "homepage": "https://github.com/walmir/xare",
+
+  "auto-redeploy": true
+}
