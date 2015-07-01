@@ -13,11 +13,8 @@ import org.vertx.java.core.logging.Logger;
 import org.vertx.java.platform.Container;
 
 import wa.xare.core.DefaultRoute;
-import wa.xare.core.node.LoggerNode;
-import wa.xare.core.node.Node;
-import wa.xare.core.node.NodeBuilder;
-import wa.xare.core.node.NodeConfiguration;
-import wa.xare.core.node.NodeType;
+import wa.xare.core.node.builder.ScanningNodeBuilder;
+import wa.xare.core.node.endpoint.DirectEndpoint;
 import wa.xare.core.node.endpoint.Endpoint;
 import wa.xare.core.node.endpoint.EndpointConfiguration;
 import wa.xare.core.node.endpoint.EndpointDirection;
@@ -28,19 +25,19 @@ import wa.xare.core.selector.JsonPathSelector;
 import wa.xare.core.selector.SelectorConfiguration;
 
 @RunWith(MockitoJUnitRunner.class)
-public class NodeBuilderTest {
+public class ScanningNodeBuilderTest {
 
-	private NodeBuilder builder;
+  private ScanningNodeBuilder builder;
 
 	@Mock
-	private DefaultRoute defaultRoute;
+	private DefaultRoute route;
 
 	@Before
 	public void prepare() {
 		Container container = mock(Container.class);
-		when(defaultRoute.getContainer()).thenReturn(container);
+		when(route.getContainer()).thenReturn(container);
 		when(container.logger()).thenReturn(mock(Logger.class));
-		builder = new NodeBuilder(defaultRoute);
+    builder = ScanningNodeBuilder.getInstance();
 	}
 
 	@Test
@@ -51,8 +48,9 @@ public class NodeBuilderTest {
 		NodeConfiguration loggerNodeConfig = new NodeConfiguration()
 		    .withType(NodeType.LOGGER);
 
-		assertThat(builder.buildNode(endpointConfig)).isInstanceOf(Endpoint.class);
-		assertThat(builder.buildNode(loggerNodeConfig)).isInstanceOf(
+    assertThat(builder.getNodeInstance(route, endpointConfig)).isInstanceOf(
+        Endpoint.class);
+    assertThat(builder.getNodeInstance(route, loggerNodeConfig)).isInstanceOf(
 		    LoggerNode.class);
 	}
 
@@ -69,7 +67,7 @@ public class NodeBuilderTest {
     splitterConfig.putNumber(SplitterNode.GROUP_FIELD, 1);
     splitterConfig.putString(SplitterNode.TOKEN_FIELD, token);
     
-    Node node = builder.buildNode(splitterConfig);
+    Node node = builder.getNodeInstance(route, splitterConfig);
     
     assertThat(node).isInstanceOf(SplitterNode.class);
     SplitterNode splitterNode = (SplitterNode) node;
@@ -80,5 +78,17 @@ public class NodeBuilderTest {
     JsonPathSelector selector = (JsonPathSelector) splitterNode.getSelector();
     assertThat(selector.getSegment()).isEqualTo(PacketSegment.HEADERS);
     assertThat(selector.getExpression()).isEqualTo(expression);
+  }
+
+  @Test
+  public void testBuildEndpoint() throws Exception {
+    EndpointConfiguration conf = new EndpointConfiguration()
+        .withEndpointAddress("address")
+        .withEndpointDirection(EndpointDirection.INCOMING)
+        .withEndpointType(EndpointTypeNames.DEFAULT_DIRECT_ENDPOINT);
+
+    Endpoint point = builder.getEndpointInstance(route, conf);
+    assertThat(point).isInstanceOf(DirectEndpoint.class);
+
   }
 }

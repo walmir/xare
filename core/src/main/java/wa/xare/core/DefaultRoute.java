@@ -6,19 +6,19 @@ import org.vertx.java.core.logging.Logger;
 import org.vertx.java.platform.Verticle;
 
 import wa.xare.core.node.Node;
-import wa.xare.core.node.NodeBuilder;
 import wa.xare.core.node.NodeConfiguration;
 import wa.xare.core.node.PipelineNode;
+import wa.xare.core.node.builder.ScanningNodeBuilder;
 import wa.xare.core.node.endpoint.Endpoint;
-import wa.xare.core.node.endpoint.EndpointBuilder;
 import wa.xare.core.node.endpoint.EndpointConfiguration;
+import wa.xare.core.node.endpoint.EndpointDirection;
 import wa.xare.core.packet.Packet;
 
 public class DefaultRoute extends Verticle implements Route {
 
   private Logger logger;
 
-  private EndpointBuilder endpointBuilder;
+  // private EndpointBuilder endpointBuilder;
 
   private String name;
 
@@ -66,7 +66,7 @@ public class DefaultRoute extends Verticle implements Route {
   @Override
   public void start() {
     logger = container.logger();
-    endpointBuilder = new EndpointBuilder(this);
+    // endpointBuilder = new EndpointBuilder(this);
 
     RouteConfiguration config = new RouteConfiguration(container.config());
     configureRoute(config);
@@ -101,25 +101,37 @@ public class DefaultRoute extends Verticle implements Route {
   }
 
   private void configureNodes(List<NodeConfiguration> nodeConfigs) {
-    NodeBuilder builder = new NodeBuilder(this);
+    // NodeBuilder builder = new NodeBuilder(this);
+    // for (NodeConfiguration nc : nodeConfigs) {
+    // logger.info("Node " + nc);
+    // this.addNode(builder.buildNode(nc));
+    // }
+    ScanningNodeBuilder builder = ScanningNodeBuilder.getInstance();
     for (NodeConfiguration nc : nodeConfigs) {
-      logger.info("Node " + nc);
-      this.addNode(builder.buildNode(nc));
+      Node n = builder.getNodeInstance(this, nc);
+      this.addNode(n);
     }
   }
 
   private void configureIncomingEndpoint(EndpointConfiguration inpointConfig) {
-    this.incomingEndpoint = endpointBuilder.buildEndpoint(inpointConfig);
+    inpointConfig.setEndpointDirection(EndpointDirection.INCOMING);
+    inpointConfig.setType("endpoint");
+
+    incomingEndpoint = ScanningNodeBuilder.getInstance()
+        .getEndpointInstance(this, inpointConfig);
+
+    // this.incomingEndpoint = endpointBuilder.buildEndpoint(inpointConfig);
     if (incomingEndpoint != null) {
       if (pipeline == null) {
         throw new IllegalStateException("processing chain cannot be null");
       }
+      incomingEndpoint.setRoute(this);
       incomingEndpoint.setHandler(pipeline::startProcessing);
       incomingEndpoint.deploy();
     }
   }
 
-  public void setPipline(PipelineNode pipeline) {
+  public void setPipeline(PipelineNode pipeline) {
     this.pipeline = pipeline;
   }
 

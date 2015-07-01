@@ -2,15 +2,18 @@ package wa.xare.core.node.subroute;
 
 import org.vertx.java.core.json.JsonArray;
 
+import wa.xare.core.node.NodeConfiguration;
+import wa.xare.core.node.builder.NodeType;
 import wa.xare.core.packet.Packet;
 
+@NodeType
 public class FilterNode extends DefaultSubRouteNode {
 	
 	
 	@Override
   public void doProcess(Packet packet) {
     if (passesFilter(packet)) {
-      getPipline().startProcessing(packet);
+      getPipeline().startProcessing(packet);
     }
     // do nothing -> filter packet out
   }
@@ -27,5 +30,10 @@ public class FilterNode extends DefaultSubRouteNode {
     }
     return false;
 	}
+
+  @Override
+  protected void doConfigure(NodeConfiguration configuration) {
+    // Do nothing: Abstract node takes care of configuring the selector
+  }
 	
 }

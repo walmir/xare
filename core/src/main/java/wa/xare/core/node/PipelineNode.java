@@ -4,9 +4,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.vertx.java.core.json.JsonArray;
+import org.vertx.java.core.json.JsonObject;
+
+import wa.xare.core.node.builder.NodeType;
+import wa.xare.core.node.builder.ScanningNodeBuilder;
 import wa.xare.core.packet.Packet;
 
+@NodeType
 public class PipelineNode extends AbstractNode {
+
+  public static final String TYPE = "pipeline";
 
   private List<Node> nodes;
 
@@ -36,12 +44,12 @@ public class PipelineNode extends AbstractNode {
 
   }
 
-  @Override
-  protected void notifyProcessingListeners(ProcessingResult result) {
-    for (ProcessingListener pl : processingListeners) {
-      pl.done(result);
-    }
-  }
+  // @Override
+  // protected void notifyProcessingListeners(ProcessingResult result) {
+  // for (ProcessingListener pl : processingListeners) {
+  // pl.done(result);
+  // }
+  // }
 
   @Override
   public void startProcessing(Packet packet) {
@@ -68,6 +76,19 @@ public class PipelineNode extends AbstractNode {
       return Collections.emptyList();
     }
     return nodes;
+  }
+
+  @Override
+  protected void doConfigure(NodeConfiguration configuration) {
+    JsonArray array = configuration.getArray("nodes");
+    for (Object obj : array) {
+      if (obj instanceof JsonObject) {
+        NodeConfiguration config = new NodeConfiguration((JsonObject) obj);
+        Node node = ScanningNodeBuilder.getInstance().getNodeInstance(route,
+            config);
+        addNode(node);
+      }
+    }
   }
 
 }

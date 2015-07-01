@@ -5,7 +5,9 @@ import wa.xare.core.packet.Packet;
 
 public interface Node {
 
-	void startProcessing(Packet packet);
+  void configure(Route route, NodeConfiguration configuration);
+
+  void startProcessing(Packet packet);
 
 	void addProcessingListener(ProcessingListener listener);
 

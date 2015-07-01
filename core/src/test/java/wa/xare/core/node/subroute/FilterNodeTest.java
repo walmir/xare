@@ -13,9 +13,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.vertx.java.core.json.JsonObject;
 
 import wa.xare.core.node.Node;
+import wa.xare.core.node.NodeConfiguration;
+import wa.xare.core.node.NodeType;
 import wa.xare.core.packet.DefaultPacket;
 import wa.xare.core.packet.Packet;
+import wa.xare.core.packet.PacketSegment;
 import wa.xare.core.selector.JsonPathSelector;
+import wa.xare.core.selector.SelectorConfiguration;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FilterNodeTest {
@@ -55,6 +59,18 @@ public class FilterNodeTest {
     secondBook.putNumber(PRICE, 10);
     secondPacket = new DefaultPacket();
     secondPacket.setBody(secondBook);
+  }
+
+  @Test
+  public void testBuildingFilterNode() throws Exception {
+
+    NodeConfiguration filterConfig = new NodeConfiguration().withType(
+        NodeType.FILTER).withSelector(
+        new SelectorConfiguration().withExpression("someExpression")
+            .withExpressionLanguage("jsonPath")
+            .withSegment(PacketSegment.HEADERS));
+
+
   }
 
   @Test

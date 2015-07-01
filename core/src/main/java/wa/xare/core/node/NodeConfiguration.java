@@ -45,4 +45,13 @@ public class NodeConfiguration extends JsonObject {
     return this;
   }
 
+  public void setType(String type) {
+    putString("type", type);
+  }
+
+  public NodeConfiguration withType(String type) {
+    setType(type);
+    return this;
+  }
+
 }

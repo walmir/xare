@@ -1,5 +1,6 @@
 package wa.xare.core.node.endpoint;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -21,6 +22,7 @@ import org.vertx.java.core.logging.Logger;
 import org.vertx.java.platform.Container;
 
 import wa.xare.core.DefaultRoute;
+import wa.xare.core.node.builder.ScanningNodeBuilder;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DirectEndpointTest {
@@ -51,8 +53,9 @@ public class DirectEndpointTest {
 		when(defaultRoute.getVertx()).thenReturn(vertx);
 		when(vertx.eventBus()).thenReturn(eventBus);
 
-		endpoint = spy(new DirectEndpoint(defaultRoute, EndpointDirection.INCOMING,
+    endpoint = spy(new DirectEndpoint(EndpointDirection.INCOMING,
 		    address));
+    endpoint.setRoute(defaultRoute);
 	}
 
 	@Test
@@ -75,4 +78,19 @@ public class DirectEndpointTest {
 		verify(endpoint).deployAsIncomingEndpoint();
 		verify(eventBus).registerHandler(anyString(), any());
 	}
+
+  @Test
+  public void testAnnotationBasedConfiguration() {
+    EndpointConfiguration finalNode = new EndpointConfiguration();
+    finalNode.setEndpointAddress("output");
+    finalNode.setEndpointDirection(EndpointDirection.OUTGOING);
+    finalNode.setEndpointType(EndpointTypeNames.DEFAULT_DIRECT_ENDPOINT);
+
+    Endpoint endpoint = ScanningNodeBuilder.getInstance().getEndpointInstance(
+        defaultRoute, finalNode);
+
+    assertThat(endpoint).isInstanceOf(DirectEndpoint.class);
+    DirectEndpoint de = (DirectEndpoint) endpoint;
+    assertThat(de.direction).isEqualTo(EndpointDirection.OUTGOING);
+  }
 }

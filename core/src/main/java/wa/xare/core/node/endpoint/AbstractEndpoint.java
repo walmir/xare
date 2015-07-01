@@ -2,26 +2,26 @@ package wa.xare.core.node.endpoint;
 
 import wa.xare.core.Route;
 import wa.xare.core.node.AbstractNode;
+import wa.xare.core.node.NodeConfiguration;
 import wa.xare.core.packet.Packet;
 
 public abstract class AbstractEndpoint extends AbstractNode implements
     Endpoint {
 
 	protected EndpointDirection direction;
+  protected String address;
 
-  protected Route route;
 	private EndpointHandler handler;
 
-  protected AbstractEndpoint(Route route, EndpointDirection direction) {
-    this.route = route;
+
+  protected AbstractEndpoint(EndpointDirection direction) {
 		this.direction = direction;
 	}
 
-	// protected Route getRoute() {
-	// return route;
-	// }
+  public AbstractEndpoint() {
+  }
 
-	@Override
+  @Override
 	public final void deploy() {
 		if (direction == null) {
 			throw new EndpointConfigurationException("endpoint direction not defined");
@@ -74,5 +74,14 @@ public abstract class AbstractEndpoint extends AbstractNode implements
 		}
 		// else do nothing
 	}
+
+  @Override
+  public void configure(Route route, NodeConfiguration configuration) {
+    EndpointConfiguration config = new EndpointConfiguration(configuration);
+    this.direction = config.getEndpointDirection();
+    this.address = config.getEndpointAddress();
+
+    super.configure(route, configuration);
+  }
 
 }

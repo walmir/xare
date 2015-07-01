@@ -13,9 +13,8 @@ import org.vertx.java.core.eventbus.EventBus;
 import org.vertx.java.core.logging.Logger;
 import org.vertx.java.platform.Container;
 
-import wa.xare.core.DefaultRoute;
-import wa.xare.core.RouteConfiguration;
 import wa.xare.core.node.AbstractNode;
+import wa.xare.core.node.NodeConfiguration;
 import wa.xare.core.node.ProcessingResult;
 import wa.xare.core.node.endpoint.EndpointConfiguration;
 import wa.xare.core.node.endpoint.EndpointDirection;
@@ -95,6 +94,11 @@ public class DefaultRouteTest {
 			    .successfulProcessingResult(packet));
 		}
 
+    @Override
+    protected void doConfigure(NodeConfiguration configuration) {
+      // TODO Auto-generated method stub
+    }
+
 	}
 
 	public class BadNode extends AbstractNode {
@@ -104,6 +108,11 @@ public class DefaultRouteTest {
 			notifyProcessingListeners(ProcessingResult.failedProcessingResult(packet,
 			    new Throwable("bad node does bad things")));
 		}
+
+    @Override
+    protected void doConfigure(NodeConfiguration configuration) {
+      // TODO Auto-generated method stub
+    }
 
 	}
 

@@ -1,21 +1,27 @@
 package wa.xare.core.node.endpoint;
 
 import org.vertx.java.core.logging.Logger;
+import org.vertx.java.core.logging.impl.LoggerFactory;
 
-import wa.xare.core.Route;
+import wa.xare.core.node.NodeConfiguration;
+import wa.xare.core.node.builder.EndpointType;
 import wa.xare.core.packet.Packet;
 import wa.xare.core.packet.PacketBuilder;
 
+@EndpointType
 public class DirectEndpoint extends AbstractEndpoint {
+  // LoggerFactory.get
+  private static final Logger LOGGER = LoggerFactory
+      .getLogger(DirectEndpoint.class);
 
-	private String address;
-	private Logger logger;
 
-  public DirectEndpoint(Route route,
-      EndpointDirection direction, String address) {
-    super(route, direction);
+  public DirectEndpoint() {
+    super();
+  }
+
+  public DirectEndpoint(EndpointDirection direction, String address) {
+    super(direction);
 		this.address = address;
-    logger = route.getContainer().logger();
 	}
 
 	@Override
@@ -42,12 +48,19 @@ public class DirectEndpoint extends AbstractEndpoint {
 	protected void deployAsIncomingEndpoint() {
 		if (direction == EndpointDirection.INCOMING) {
 			route.getVertx().eventBus().registerHandler(address, message -> {
-				logger.debug("recieved packet: " + message.body());
+        LOGGER.debug("recieved packet: " + message.body());
 				Packet packet = PacketBuilder.build(message);
 				notifyHandler(packet);
 			});
 		}
+  }
 
-	}
+  @Override
+  protected void doConfigure(NodeConfiguration configuration) {
+    // Do nothing, config is done in super::configure()
+    assert (this.direction != null) : "endpoint direction not set";
+    assert (this.address != null) : "endpoing address not set";
+  }
+
 
 }

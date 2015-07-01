@@ -3,14 +3,18 @@ package wa.xare.core.node.subroute;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.vertx.java.core.json.JsonArray;
 
+import wa.xare.core.node.NodeConfiguration;
 import wa.xare.core.node.PipelineNode;
 import wa.xare.core.node.ProcessingException;
+import wa.xare.core.node.builder.NodeType;
 import wa.xare.core.packet.Packet;
 import wa.xare.core.packet.PacketBuilder;
 
+@NodeType
 public class SplitterNode extends DefaultSubRouteNode {
 
   public static final String GROUP_FIELD = "group";
@@ -88,7 +92,7 @@ public class SplitterNode extends DefaultSubRouteNode {
   }
 
   private void checkNodeChain() {
-    PipelineNode pipeline = getPipline();
+    PipelineNode pipeline = getPipeline();
 
     if (pipeline == null) {
       throw new IllegalStateException(
@@ -120,4 +124,16 @@ public class SplitterNode extends DefaultSubRouteNode {
       return packet.getBody();
     }
   }
+
+  @Override
+  protected void doConfigure(NodeConfiguration configuration) {
+    Optional<Integer> groupOption = Optional.ofNullable(configuration
+        .getInteger(GROUP_FIELD));
+    Optional<String> tokenOption = Optional.ofNullable(configuration
+        .getString(TOKEN_FIELD));
+
+    groupOption.ifPresent(this::setGroup);
+    tokenOption.ifPresent(this::setToken);
+  }
+
 }

@@ -90,4 +90,43 @@ public class ChoiceNodeTest {
 
   }
 
+  // private NodeConfiguration buildChoiceNodeConfig() {
+  // NodeConfiguration choiceConfig = new NodeConfiguration()
+  // .withType(NodeType.CHOICE);
+  // JsonArray cases = new JsonArray();
+  //
+  // // 1st Selector
+  // SelectorConfiguration selector1Config = new SelectorConfiguration()
+  // .withExpressionLanguage(
+  // SelectorConfiguration.JSON_PATH_EXPRESSION_LANGUAGE)
+  // .withExpression("$.[?(@.value==1)]");
+  //
+  // SelectorConfiguration selector2Config = new SelectorConfiguration()
+  // .withExpressionLanguage(
+  // SelectorConfiguration.JSON_PATH_EXPRESSION_LANGUAGE)
+  // .withExpression("$.[?(@.value==2)]");
+  //
+  // JsonObject case1 = new JsonObject();
+  // case1.putObject("selector", selector1Config);
+  //
+  // JsonObject case2 = new JsonObject();
+  // case2.putObject("selector", selector2Config);
+  //
+  // JsonArray nodePath1 = new JsonArray();
+  // nodePath1.add(end1);
+  // JsonArray nodePath2 = new JsonArray();
+  // nodePath2.add(end2);
+  // JsonArray nodePathOtherwise = new JsonArray();
+  // nodePathOtherwise.add(endOtherwise);
+  //
+  // case1.putArray("nodes", nodePath1);
+  // case2.putArray("nodes", nodePath2);
+  //
+  // cases.add(case1);
+  // cases.add(case2);
+  //
+  // choiceConfig.putArray("cases", cases);
+  // choiceConfig.putArray("otherwise", nodePathOtherwise);
+  // }
+
 }

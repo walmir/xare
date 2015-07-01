@@ -27,7 +27,7 @@ public class BasicRouteIntegrationTest extends TestVerticle {
       testComplete();
     });
 
-    vertx.eventBus().sendWithTimeout("address-0", msgBody, 10_000, r -> {
+    vertx.eventBus().sendWithTimeout("address-0", msgBody, 5_000, r -> {
       if (r.failed()) {
         fail(r.cause().getMessage());
       }

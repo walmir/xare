@@ -12,9 +12,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.vertx.java.core.Vertx;
 
 import wa.xare.core.Route;
-import wa.xare.core.node.endpoint.AbstractEndpoint;
-import wa.xare.core.node.endpoint.EndpointConfigurationException;
-import wa.xare.core.node.endpoint.EndpointDirection;
+import wa.xare.core.node.NodeConfiguration;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AbstractEndpointTest {
@@ -33,7 +31,7 @@ public class AbstractEndpointTest {
 	}
 
 	private AbstractEndpoint createEndpointSpy() {
-		return spy(new AbstractEndpoint(null, null) {
+    return spy(new AbstractEndpoint(null) {
 			@Override
 			protected void deployAsOutgoingEndpoint() {
 				// do nothing
@@ -48,6 +46,11 @@ public class AbstractEndpointTest {
 			protected void deliverOutgoingMessage(Object object) {
 				// do nothing
 			}
+
+      @Override
+      protected void doConfigure(NodeConfiguration configuration) {
+        // do nothing
+      }
 		});
 	}
 
