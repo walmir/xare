@@ -1,86 +1,167 @@
 package wa.xare.core.node;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import io.vertx.core.logging.JULLogDelegateFactory;
+import io.vertx.core.logging.LoggerFactory;
 
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+
+import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.vertx.java.core.logging.Logger;
-import org.vertx.java.platform.Container;
 
-import wa.xare.core.Route;
-import wa.xare.core.node.LoggerNode;
 import wa.xare.core.packet.Packet;
+
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoggerNodeTest {
 
-	@Spy
-	LoggerNode node;
 
-	@Mock
-	Route Route;
+  // @Spy
+  LoggerNode node;
 
-	@Mock
-	Logger logger;
+  // @Mock
+  // Route Route;
 
-	@Before
-	public void prepare() {
-		Container container = mock(Container.class);
+  @Mock
+  Packet packet;
 
-		when(Route.getContainer()).thenReturn(container);
-		when(container.logger()).thenReturn(logger);
+  LogHandler handler;
 
-		node.setRoute(Route);
-	}
+  private String oldLoggerClass;
 
-	@Test
-	public void testStartProcessing() throws Exception {
-		node.setLevel(LoggerNode.INFO);
-		node.startProcessing(mock(Packet.class));
+  private Level oldLevel;
 
-		verify(logger).info(any());
-		verifyNoMoreInteractions(logger);
+  private java.util.logging.Logger logger;
 
-		reset(logger);
+  // @Spy
+  // Logger logger = LoggerFactory.getLogger(LoggerNode.class);
 
-		node.setLevel(LoggerNode.DEBUG);
-		node.startProcessing(mock(Packet.class));
+  @BeforeClass
+  public static void prepareLogger() {
 
-		verify(logger).debug(any());
-		verifyNoMoreInteractions(logger);
+  }
 
-		reset(logger);
+  @Before
+  public void prepare() {
 
-		node.setLevel(LoggerNode.ERROR);
-		node.startProcessing(mock(Packet.class));
+    try{
+      oldLoggerClass = System
+          .getProperty(LoggerFactory.LOGGER_DELEGATE_FACTORY_CLASS_NAME);
+    } catch (Exception e) {
+    }
 
-		verify(logger).error(any());
-		verifyNoMoreInteractions(logger);
+    System.setProperty(LoggerFactory.LOGGER_DELEGATE_FACTORY_CLASS_NAME,
+        JULLogDelegateFactory.class.getName());
 
-		reset(logger);
+    MockitoAnnotations.initMocks(this);
+    node = new LoggerNode();
+    logger = java.util.logging.Logger
+        .getLogger(LoggerNode.class.getName());
 
-		node.setLevel(LoggerNode.TRACE);
-		node.startProcessing(mock(Packet.class));
+    handler = new LogHandler();
 
-		verify(logger).trace(any());
-		verifyNoMoreInteractions(logger);
+    oldLevel = logger.getLevel();
 
-		reset(logger);
+    logger.setLevel(Level.ALL);
+    logger.setUseParentHandlers(false);
+    logger.addHandler(handler);
+  }
 
-		node.setLevel(LoggerNode.WARN);
-		node.startProcessing(mock(Packet.class));
+  @After
+  public void restoreLogger() {
+    if (oldLoggerClass != null) {
+      System.setProperty(LoggerFactory.LOGGER_DELEGATE_FACTORY_CLASS_NAME,
+          oldLoggerClass);
+    }
 
-		verify(logger).warn(any());
-		verifyNoMoreInteractions(logger);
-	}
+    logger.setLevel(oldLevel);
+  }
+
+  @Test
+  public void testStartProcessing() throws Exception {
+    String msg = "msg:asfdasdf90234jhgf";
+
+    when(packet.getBody()).thenReturn(msg);
+
+    node.setLevel(LoggerNode.INFO);
+    node.startProcessing(packet);
+
+    assertThat(handler.checkLevel()).isNotNull();
+    assertThat(handler.checkMessage()).isNotNull();
+
+    assertThat(handler.checkLevel()).isEqualTo(Level.INFO);
+    assertThat(handler.checkMessage()).contains(msg);
+
+    handler.reset();
+
+    node.setLevel(LoggerNode.ERROR);
+    node.startProcessing(packet);
+
+    assertThat(handler.checkLevel()).isEqualTo(Level.SEVERE);
+    assertThat(handler.checkMessage()).contains(msg);
+
+    handler.reset();
+
+    node.setLevel(LoggerNode.TRACE);
+    node.startProcessing(packet);
+
+    assertThat(handler.checkLevel()).isEqualTo(Level.FINEST);
+    assertThat(handler.checkMessage()).contains(msg);
+
+    handler.reset();
+
+    node.setLevel(LoggerNode.DEBUG);
+    node.startProcessing(packet);
+
+    assertThat(handler.checkLevel()).isEqualTo(Level.FINE);
+    assertThat(handler.checkMessage()).contains(msg);
+
+    handler.reset();
+
+    node.setLevel(LoggerNode.WARN);
+    node.startProcessing(packet);
+
+    assertThat(handler.checkLevel()).isEqualTo(Level.WARNING);
+    assertThat(handler.checkMessage()).contains(msg);
+  }
+
+  class LogHandler extends Handler {
+    Level lastLevel = null;
+    private String lastMessage = null;
+
+    public Level checkLevel() {
+      return lastLevel;
+    }
+
+    public String checkMessage() {
+      return lastMessage;
+    }
+
+    public void publish(LogRecord record) {
+      lastMessage = record.getMessage();
+      lastLevel = record.getLevel();
+    }
+
+    public void close() {
+    }
+
+    public void flush() {
+    }
+
+    public void reset() {
+      lastLevel = null;
+      lastMessage = null;
+    }
+  }
+
 
 }

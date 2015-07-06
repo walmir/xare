@@ -1,8 +1,8 @@
 package wa.xare.core.node.endpoint;
 
-import org.vertx.java.core.logging.Logger;
-import org.vertx.java.core.logging.impl.LoggerFactory;
 
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import wa.xare.core.node.NodeConfiguration;
 import wa.xare.core.node.builder.EndpointType;
 import wa.xare.core.packet.Packet;
@@ -27,7 +27,8 @@ public class DirectEndpoint extends AbstractEndpoint {
 	@Override
 	protected void deliverOutgoingMessage(Object message) {
 		if (direction == EndpointDirection.OUTGOING) {
-			route.getContainer().logger().debug(message);
+      LOGGER.debug(message);
+
 			route.getVertx().eventBus().send(address, message);
 		}
 	}
@@ -47,7 +48,7 @@ public class DirectEndpoint extends AbstractEndpoint {
 	@Override
 	protected void deployAsIncomingEndpoint() {
 		if (direction == EndpointDirection.INCOMING) {
-			route.getVertx().eventBus().registerHandler(address, message -> {
+      route.getVertx().eventBus().consumer(address, message -> {
         LOGGER.debug("recieved packet: " + message.body());
 				Packet packet = PacketBuilder.build(message);
 				notifyHandler(packet);

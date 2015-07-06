@@ -1,7 +1,6 @@
 package wa.xare.core.selector;
 
-import org.vertx.java.core.json.JsonArray;
-
+import io.vertx.core.json.JsonArray;
 import wa.xare.core.packet.Packet;
 import wa.xare.core.packet.PacketSegment;
 

@@ -1,60 +1,87 @@
 package wa.xare.core.node;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.spy;
+import io.vertx.core.json.JsonArray;
 
-import org.junit.Before;
+import java.util.List;
+
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.logging.Logger;
-import org.vertx.java.platform.Container;
+import org.mockito.InOrder;
 
-import wa.xare.core.DefaultRoute;
+import wa.xare.core.packet.Packet;
 
-@RunWith(MockitoJUnitRunner.class)
 public class PipelineNodeTest {
 
-  @Mock
-  private DefaultRoute route;
+  @Test
+  public void testConfigurePipelineNode() {
+    PipelineNode node = new PipelineNode();
+    node.configure(null, buildPipelineConfiguration());
 
-  @Before
-  public void prepare() {
-    Container container = mock(Container.class);
-    when(route.getContainer()).thenReturn(container);
-    when(container.logger()).thenReturn(mock(Logger.class));
+    List<Node> nodes = node.getNodes();
+    assertThat(nodes).hasSize(2);
+    assertThat(nodes.get(0)).isInstanceOf(LoggerNode.class);
+    assertThat(nodes.get(1)).isInstanceOf(LoggerNode.class);
+    assertThat(((LoggerNode) nodes.get(0)).getLevel()).isEqualTo("info");
+    assertThat(((LoggerNode) nodes.get(1)).getLevel()).isEqualTo("debug");
+
+  }
+
+  @Test
+  public void testTraverse() throws Exception {
+    Packet packet = mock(Packet.class);
+    Node node1 = spy(new GoodNode());
+    Node node2 = spy(new GoodNode());
+    
+    InOrder inorder = inOrder(node1, node2);
+
+    PipelineNode node = new PipelineNode();
+    node.addNode(node1);
+    node.addNode(node2);
+
+    node.startProcessing(packet);
+
+    inorder.verify(node1).startProcessing(packet);
+    inorder.verify(node2).startProcessing(packet);
+
   }
 
   private NodeConfiguration buildPipelineConfiguration() {
 
     NodeConfiguration loggerConfig = new NodeConfiguration()
         .withType(NodeType.LOGGER);
-    loggerConfig.putString("level", "info");
-    
+    loggerConfig.put("level", "info");
+
     NodeConfiguration loggerConfig2 = new NodeConfiguration()
-    .withType(NodeType.LOGGER);
-    loggerConfig2.putString("level", "info");
+        .withType(NodeType.LOGGER);
+    loggerConfig2.put("level", "debug");
 
     JsonArray nodes = new JsonArray();
     nodes.add(loggerConfig);
     nodes.add(loggerConfig2);
-    
-    
+
     NodeConfiguration pipelineConfig = new NodeConfiguration();
-    pipelineConfig.putString("type", "pipeline");
-    pipelineConfig.putArray("nodes", nodes);
+    pipelineConfig.put("type", "pipeline");
+    pipelineConfig.put("nodes", nodes);
 
     return pipelineConfig;
   }
 
-  @Test
-  public void testConfigurePipelineNode() {
-    PipelineNode node = new PipelineNode();
-    node.configure(route, buildPipelineConfiguration());
+  public class GoodNode extends AbstractNode {
 
-    System.out.println(node.getNodes().get(0));
+    @Override
+    public void startProcessing(Packet packet) {
+      notifyProcessingListeners(ProcessingResult
+          .successfulProcessingResult(packet));
+    }
+
+    @Override
+    protected void doConfigure(NodeConfiguration configuration) {
+      // TODO Auto-generated method stub
+    }
+
   }
 
 }

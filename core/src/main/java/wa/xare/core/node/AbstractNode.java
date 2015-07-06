@@ -43,9 +43,9 @@ public abstract class AbstractNode implements Node {
 
   @Override
   public void configure(Route route, NodeConfiguration configuration) {
-    if (configuration.containsField(NodeConfiguration.SELECTOR_CONFIG_FIELD)) {
+    if (configuration.containsKey(NodeConfiguration.SELECTOR_CONFIG_FIELD)) {
       SelectorConfiguration selectorConfig = new SelectorConfiguration(
-          configuration.getObject(NodeConfiguration.SELECTOR_CONFIG_FIELD));
+          configuration.getJsonObject(NodeConfiguration.SELECTOR_CONFIG_FIELD));
       SelectorBuilder builder = new SelectorBuilder();
       Selector selector = builder.buildSelector(selectorConfig);
       this.setSelector(selector);

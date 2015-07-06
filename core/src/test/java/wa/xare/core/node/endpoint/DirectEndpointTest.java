@@ -9,17 +9,16 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
+import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.logging.Logger;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.Vertx;
-import org.vertx.java.core.eventbus.EventBus;
-import org.vertx.java.core.logging.Logger;
-import org.vertx.java.platform.Container;
 
 import wa.xare.core.DefaultRoute;
 import wa.xare.core.node.builder.ScanningNodeBuilder;
@@ -27,57 +26,54 @@ import wa.xare.core.node.builder.ScanningNodeBuilder;
 @RunWith(MockitoJUnitRunner.class)
 public class DirectEndpointTest {
 
-	private final String address = "address";
+  private final String address = "address";
 
-	@Mock
-	DefaultRoute defaultRoute;
+  @Mock
+  DefaultRoute defaultRoute;
 
-	@Mock
-	Vertx vertx;
+  @Mock
+  Vertx vertx;
 
-	@Mock
-	EventBus eventBus;
+  @Mock
+  EventBus eventBus;
 
-	@Mock
-	Container container;
+  // @Mock
+  // Container container;
 
-	@Mock
-	Logger logger;
+  @Mock
+  Logger logger;
 
-	DirectEndpoint endpoint;
+  DirectEndpoint endpoint;
 
-	@Before
-	public void prepareTest() {
-		when(defaultRoute.getContainer()).thenReturn(container);
-		when(container.logger()).thenReturn(logger);
-		when(defaultRoute.getVertx()).thenReturn(vertx);
-		when(vertx.eventBus()).thenReturn(eventBus);
+  @Before
+  public void prepareTest() {
+    when(defaultRoute.getVertx()).thenReturn(vertx);
+    when(vertx.eventBus()).thenReturn(eventBus);
 
-    endpoint = spy(new DirectEndpoint(EndpointDirection.INCOMING,
-		    address));
+    endpoint = spy(new DirectEndpoint(EndpointDirection.INCOMING, address));
     endpoint.setRoute(defaultRoute);
-	}
+  }
 
-	@Test
-	public void testDeliverOutgoingMessage() throws Exception {
-		endpoint.direction = EndpointDirection.OUTGOING;
-		Object msg = "test";
-		endpoint.deliverOutgoingMessage(msg);
+  @Test
+  public void testDeliverOutgoingMessage() throws Exception {
+    endpoint.direction = EndpointDirection.OUTGOING;
+    Object msg = "test";
+    endpoint.deliverOutgoingMessage(msg);
 
-		verify(eventBus).send(eq("address"), eq(msg));
+    verify(eventBus).send(eq("address"), eq(msg));
 
-		reset(eventBus);
-		endpoint.direction = EndpointDirection.INCOMING;
-		endpoint.deliverOutgoingMessage(msg);
-		verify(eventBus, never()).send(anyString(), any(Handler.class));
-	}
+    reset(eventBus);
+    endpoint.direction = EndpointDirection.INCOMING;
+    endpoint.deliverOutgoingMessage(msg);
+    verify(eventBus, never()).send(anyString(), any(Handler.class));
+  }
 
-	@Test
-	public void testDeployAsIncomingEndpoint() throws Exception {
-		endpoint.deploy();
-		verify(endpoint).deployAsIncomingEndpoint();
-		verify(eventBus).registerHandler(anyString(), any());
-	}
+  @Test
+  public void testDeployAsIncomingEndpoint() throws Exception {
+    endpoint.deploy();
+    verify(endpoint).deployAsIncomingEndpoint();
+    verify(eventBus).consumer(anyString(), any());
+  }
 
   @Test
   public void testAnnotationBasedConfiguration() {

@@ -1,7 +1,6 @@
 package wa.xare.core.node.subroute;
 
-import org.vertx.java.core.json.JsonArray;
-
+import io.vertx.core.json.JsonArray;
 import wa.xare.core.node.NodeConfiguration;
 import wa.xare.core.node.builder.NodeType;
 import wa.xare.core.packet.Packet;

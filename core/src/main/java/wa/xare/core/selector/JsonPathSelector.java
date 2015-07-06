@@ -1,11 +1,8 @@
 package wa.xare.core.selector;
 
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import net.minidev.json.JSONArray;
-
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.json.JsonElement;
-import org.vertx.java.core.json.JsonObject;
-
 import wa.xare.core.packet.Packet;
 
 import com.jayway.jsonpath.JsonPath;
@@ -38,19 +35,19 @@ public class JsonPathSelector extends AbstractSelector {
   }
 
   private Object getSelectionSegment(Packet packet) {
-    JsonElement object = null;
+    Object object = null;
 
     switch (getSegment()) {
 
     case HEADERS:
       final JsonObject headerObject = new JsonObject();
       packet.getHeaders().forEach((k, v) -> {
-        headerObject.putString(k, v);
+        headerObject.put(k, v);
       });
       object = headerObject;
       break;
     default: // Default is BODY
-      object = (JsonElement) packet.getBody();
+      object = packet.getBody();
       break;
     }
 

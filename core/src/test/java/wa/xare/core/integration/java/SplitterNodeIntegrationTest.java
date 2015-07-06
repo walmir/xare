@@ -1,100 +1,130 @@
 package wa.xare.core.integration.java;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.vertx.testtools.VertxAssert.fail;
-import static org.vertx.testtools.VertxAssert.testComplete;
+import io.vertx.core.DeploymentOptions;
+import io.vertx.core.Vertx;
+import io.vertx.core.eventbus.DeliveryOptions;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
+import io.vertx.ext.unit.Async;
+import io.vertx.ext.unit.TestContext;
+import io.vertx.ext.unit.junit.VertxUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.json.JsonObject;
-import org.vertx.testtools.TestVerticle;
+import org.junit.runner.RunWith;
 
 import wa.xare.core.DefaultRoute;
 import wa.xare.core.RouteConfiguration;
 import wa.xare.core.node.LoggerNode;
 import wa.xare.core.node.NodeConfiguration;
-import wa.xare.core.node.NodeType;
 import wa.xare.core.node.endpoint.EndpointConfiguration;
 import wa.xare.core.node.endpoint.EndpointDirection;
 import wa.xare.core.node.endpoint.EndpointTypeNames;
 import wa.xare.core.packet.PacketSegment;
 import wa.xare.core.selector.SelectorConfiguration;
 
-public class SplitterNodeIntegrationTest extends TestVerticle {
+@RunWith(VertxUnitRunner.class)
+public class SplitterNodeIntegrationTest {
+  
+  private static final Logger LOGGER = LoggerFactory
+      .getLogger(SplitterNodeIntegrationTest.class);
 
   private JsonObject messageBody;
   private JsonArray booksArray;
   private JsonObject bookOne;
   private JsonObject bookTwo;
 
-  @Test
-  public void testRoute() {
+  Vertx vertx;
 
+  @Before
+  public void before(TestContext context) {
+    vertx = Vertx.vertx();
+    JsonObject rConfig = configureRoute();
+    DeploymentOptions options = new DeploymentOptions().setConfig(rConfig)
+        .setWorker(true);
+    vertx.deployVerticle(DefaultRoute.class.getName(), options,
+        context.asyncAssertSuccess());
+  }
+
+  @After
+  public void after(TestContext context) {
+    vertx.close(context.asyncAssertSuccess());
+  }
+
+  @Test
+  public void testRoute(TestContext context) {
+    
     final List<Object> list = new ArrayList<>();
     // final List<Object> booksList = booksArray.toList();
-    
+
     Object msgBody = prepareMessageBody();
-    vertx.eventBus().registerHandler("sub-route-output", message -> {
-      container.logger().info("recieved output message: " + message.body());
+    Async async = context.async();
+
+    vertx.eventBus().consumer("sub-route-output", message -> {
+      LOGGER.info("recieved output message: " + message.body());
       list.add(message.body());
-      if (list.size() == 2){
+      if (list.size() == 2) {
         assertThat(list).contains(bookOne, bookTwo);
-        testComplete();
+        async.complete();
       }
     });
 
-    vertx.eventBus().sendWithTimeout("address-0", msgBody, 10_000, r -> {
-      if (r.failed()) {
-        fail(r.cause().getMessage());
-      }
-      container.logger().info("result: " + r.result());
-    });
+
+    vertx.eventBus()
+      .send("address-0", msgBody, new DeliveryOptions().setSendTimeout(10_000), r -> {
+        if (r.failed()) {
+          context.fail(r.cause().getMessage());
+        }
+        LOGGER.info("result: " + r.result());
+      });
   }
 
-  @Override
-  public void start() {
-    initialize();
-    configureAndDeployRoute();
-  }
+  // @Override
+  // public void start() {
+  // initialize();
+  // configureAndDeployRoute();
+  // }
 
-  private void configureAndDeployRoute() {
+  private JsonObject configureRoute() {
     String bookSelector = "$.books";
     String titleSelector = "$.title";
 
     NodeConfiguration logNodeConfig = new NodeConfiguration();
-    logNodeConfig.setType(NodeType.LOGGER);
-    logNodeConfig.putString(LoggerNode.LOG_LEVEL_FIELD, "info");
+    logNodeConfig.setType("logger");
+    logNodeConfig.put(LoggerNode.LOG_LEVEL_FIELD, "info");
 
-    NodeConfiguration splitNodeConfig = new NodeConfiguration();
-    splitNodeConfig.setType(NodeType.SPLITTER);
-    splitNodeConfig.setSelector(new SelectorConfiguration()
-        .withExpressionLanguage(
-            SelectorConfiguration.JSON_PATH_EXPRESSION_LANGUAGE)
-        .withSegment(PacketSegment.BODY)
-        .withExpression(bookSelector));
+    NodeConfiguration splitNodeConfig = new NodeConfiguration()
+        .withType("splitter")
+        .withSelector(new SelectorConfiguration()
+          .withExpressionLanguage(
+              SelectorConfiguration.JSON_PATH_EXPRESSION_LANGUAGE)
+              .withSegment(PacketSegment.BODY).withExpression(bookSelector));
 
-    NodeConfiguration secondLogNode = new NodeConfiguration();
-    secondLogNode.setType(NodeType.LOGGER);
-    secondLogNode.putString(LoggerNode.LOG_LEVEL_FIELD, "info");
-    secondLogNode
-        .setSelector(new SelectorConfiguration()
+    NodeConfiguration secondLogNode = new NodeConfiguration()
+      .withType("logger")
+      .withSelector(new SelectorConfiguration()
         .withExpressionLanguage(
             SelectorConfiguration.JSON_PATH_EXPRESSION_LANGUAGE)
         .withExpression(titleSelector));
-    
+    secondLogNode.put(LoggerNode.LOG_LEVEL_FIELD, "info");
+
     EndpointConfiguration subFinalNode = new EndpointConfiguration();
     subFinalNode.setEndpointAddress("sub-route-output");
     subFinalNode.setEndpointDirection(EndpointDirection.OUTGOING);
     subFinalNode.setEndpointType(EndpointTypeNames.DEFAULT_DIRECT_ENDPOINT);
-    
+
     JsonArray nodes = new JsonArray();
     nodes.add(secondLogNode);
     nodes.add(subFinalNode);
-    splitNodeConfig.putArray("nodes", nodes);
-    
+    splitNodeConfig.put("nodes", nodes);
+
     EndpointConfiguration finalNode = new EndpointConfiguration();
     finalNode.setEndpointAddress("route-output");
     finalNode.setEndpointDirection(EndpointDirection.OUTGOING);
@@ -112,34 +142,27 @@ public class SplitterNodeIntegrationTest extends TestVerticle {
     rConfig.addNodeConfiguration(splitNodeConfig);
     rConfig.addNodeConfiguration(finalNode);
 
-    container.deployWorkerVerticle(DefaultRoute.class.getName(), rConfig, 1,
-        false, r -> {
-          if (r.succeeded()) {
-            startTests();
-          } else {
-            fail(r.cause().getMessage());
-          }
-        });
+    return rConfig;
   }
 
   private Object prepareMessageBody() {
-    
+
     messageBody = new JsonObject();
-    messageBody.putString("someField", "someValue");
+    messageBody.put("someField", "someValue");
     booksArray = new JsonArray();
-    
+
     bookOne = new JsonObject();
-    bookOne.putString("title", "The Jungle Book");
-    bookOne.putString("author", "Rudyard Kipling");
-    
+    bookOne.put("title", "The Jungle Book");
+    bookOne.put("author", "Rudyard Kipling");
+
     bookTwo = new JsonObject();
-    bookTwo.putString("title", "Demian");
-    bookTwo.putString("author", "Hermann Hesse");
-    
+    bookTwo.put("title", "Demian");
+    bookTwo.put("author", "Hermann Hesse");
+
     booksArray.add(bookOne);
     booksArray.add(bookTwo);
 
-    messageBody.putArray("books", booksArray);
+    messageBody.put("books", booksArray);
     return messageBody;
 
   }

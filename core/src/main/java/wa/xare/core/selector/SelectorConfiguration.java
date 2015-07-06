@@ -1,10 +1,8 @@
 package wa.xare.core.selector;
 
-import org.vertx.java.core.json.JsonObject;
-
+import io.vertx.core.json.JsonObject;
 import wa.xare.core.packet.PacketSegment;
 
-@SuppressWarnings("serial")
 public class SelectorConfiguration extends JsonObject {
 
   public static final String SEGMENT_FIELD = "segment";
@@ -25,7 +23,7 @@ public class SelectorConfiguration extends JsonObject {
   }
 
   public void setSegment(PacketSegment segment) {
-    putString(SEGMENT_FIELD, segment.name().toLowerCase());
+    put(SEGMENT_FIELD, segment.name().toLowerCase());
   }
 
   public String getExpressionLanguage() {
@@ -33,7 +31,7 @@ public class SelectorConfiguration extends JsonObject {
   }
 
   public void setExpressionLanguage(String expLan) {
-    putString(EXPRESSION_LANGUAGE_FIELD, expLan);
+    put(EXPRESSION_LANGUAGE_FIELD, expLan);
   }
 
   public String getExpression() {
@@ -41,7 +39,7 @@ public class SelectorConfiguration extends JsonObject {
   }
 
   public void setExpression(String expression) {
-    putString(EXPRESSION_FIELD, expression);
+    put(EXPRESSION_FIELD, expression);
   }
 
   public SelectorConfiguration withSegment(PacketSegment segment) {

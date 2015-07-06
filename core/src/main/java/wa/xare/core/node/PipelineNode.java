@@ -1,11 +1,11 @@
 package wa.xare.core.node;
 
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.json.JsonObject;
 
 import wa.xare.core.node.builder.NodeType;
 import wa.xare.core.node.builder.ScanningNodeBuilder;
@@ -20,7 +20,6 @@ public class PipelineNode extends AbstractNode {
 
   List<ProcessingListener> processingListeners;
 
-  // @Override
   public void addNode(Node node) {
 
     if (nodes == null) {
@@ -43,13 +42,6 @@ public class PipelineNode extends AbstractNode {
     }
 
   }
-
-  // @Override
-  // protected void notifyProcessingListeners(ProcessingResult result) {
-  // for (ProcessingListener pl : processingListeners) {
-  // pl.done(result);
-  // }
-  // }
 
   @Override
   public void startProcessing(Packet packet) {
@@ -80,7 +72,7 @@ public class PipelineNode extends AbstractNode {
 
   @Override
   protected void doConfigure(NodeConfiguration configuration) {
-    JsonArray array = configuration.getArray("nodes");
+    JsonArray array = configuration.getJsonArray("nodes");
     for (Object obj : array) {
       if (obj instanceof JsonObject) {
         NodeConfiguration config = new NodeConfiguration((JsonObject) obj);

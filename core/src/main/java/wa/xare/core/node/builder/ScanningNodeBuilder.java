@@ -1,14 +1,13 @@
 package wa.xare.core.node.builder;
 
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 import java.beans.Introspector;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.json.JsonObject;
 
 import wa.xare.core.Route;
 import wa.xare.core.node.Node;
@@ -43,7 +42,6 @@ public class ScanningNodeBuilder {
           EndpointType.class, c -> {
             if (c.getClass().isInstance(Endpoint.class)) {
               endpointClassMap.put(getEndpointName(c), (Class<Endpoint>) c);
-                System.out.println(getEndpointName(c));
             } else {
               throw new NodeConfigurationException("Class '" + c.getName()
                   + "' is not of type Endpoint, and cannot be annotated with @EndpointType");
@@ -76,7 +74,7 @@ public class ScanningNodeBuilder {
 
       if (node instanceof DefaultSubRouteNode) {
         Optional<JsonArray> nodesConfig = Optional.ofNullable(configuration
-            .getArray(DefaultSubRouteNode.NODES_FIELD));
+            .getJsonArray(DefaultSubRouteNode.NODES_FIELD));
 
         nodesConfig.ifPresent(array -> {
           for (Object obj : array) {

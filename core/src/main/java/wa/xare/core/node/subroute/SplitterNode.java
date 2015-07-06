@@ -1,11 +1,11 @@
 package wa.xare.core.node.subroute;
 
+import io.vertx.core.json.JsonArray;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
-import org.vertx.java.core.json.JsonArray;
 
 import wa.xare.core.node.NodeConfiguration;
 import wa.xare.core.node.PipelineNode;
@@ -66,7 +66,7 @@ public class SplitterNode extends DefaultSubRouteNode {
 
     List<Object> splitItems = null;
     if (selection instanceof JsonArray) {
-      splitItems = ((JsonArray) selection).toList();
+      splitItems = ((JsonArray) selection).getList();
     } else if (selection instanceof String) {
       String str = (String) selection;
       if (token != null && !token.isEmpty()) {

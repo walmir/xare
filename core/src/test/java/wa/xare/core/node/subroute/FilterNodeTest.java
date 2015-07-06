@@ -4,22 +4,18 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import io.vertx.core.json.JsonObject;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.vertx.java.core.json.JsonObject;
 
 import wa.xare.core.node.Node;
-import wa.xare.core.node.NodeConfiguration;
-import wa.xare.core.node.NodeType;
 import wa.xare.core.packet.DefaultPacket;
 import wa.xare.core.packet.Packet;
-import wa.xare.core.packet.PacketSegment;
 import wa.xare.core.selector.JsonPathSelector;
-import wa.xare.core.selector.SelectorConfiguration;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FilterNodeTest {
@@ -39,39 +35,42 @@ public class FilterNodeTest {
   private Packet firstPacket;
   private Packet secondPacket;
 
-
   @Before
-  public void prepareNode(){
+  public void prepareNode() {
     String expression = "$.[?(@.author=='" + RIGHT_AUTHOR + "')]";
-    
+
     node = new FilterNode();
     node.setSelector(new JsonPathSelector(expression));
     node.addNode(mockNode);
 
     firstBook = new JsonObject();
-    firstBook.putString(AUTHOR, RIGHT_AUTHOR);
-    firstBook.putNumber(PRICE, 20);
+    firstBook.put(AUTHOR, RIGHT_AUTHOR);
+    firstBook.put(PRICE, 20);
     firstPacket = new DefaultPacket();
     firstPacket.setBody(firstBook);
 
     secondBook = new JsonObject();
-    secondBook.putString(AUTHOR, WRONG_AUTHOR);
-    secondBook.putNumber(PRICE, 10);
+    secondBook.put(AUTHOR, WRONG_AUTHOR);
+    secondBook.put(PRICE, 10);
     secondPacket = new DefaultPacket();
     secondPacket.setBody(secondBook);
   }
 
-  @Test
-  public void testBuildingFilterNode() throws Exception {
-
-    NodeConfiguration filterConfig = new NodeConfiguration().withType(
-        NodeType.FILTER).withSelector(
-        new SelectorConfiguration().withExpression("someExpression")
-            .withExpressionLanguage("jsonPath")
-            .withSegment(PacketSegment.HEADERS));
-
-
-  }
+  // @Test
+  // public void testBuildingFilterNode() throws Exception {
+  //
+  // NodeConfiguration filterConfig = new NodeConfiguration()
+  // .withType("filter")
+  // .withSelector(
+  // new SelectorConfiguration().withExpression("someExpression")
+  // .withExpressionLanguage("jsonPath")
+  // .withSegment(PacketSegment.HEADERS));
+  //
+  // FilterNode node = spy(new FilterNode());
+  // node.configure(null, filterConfig);
+  //
+  // node.getSelector().
+  // }
 
   @Test
   public void testFilteringByString() throws Exception {

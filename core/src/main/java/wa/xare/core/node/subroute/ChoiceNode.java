@@ -1,12 +1,11 @@
 package wa.xare.core.node.subroute;
 
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.json.JsonElement;
-import org.vertx.java.core.json.JsonObject;
 
 import wa.xare.core.node.Node;
 import wa.xare.core.node.NodeConfiguration;
@@ -67,10 +66,11 @@ public class ChoiceNode extends DefaultSubRouteNode {
 
   @Override
   protected void doConfigure(NodeConfiguration configuration) {
-    if (!configuration.containsField(CASES_FIELD)) {
+    if (!configuration.containsKey(CASES_FIELD)) {
       throw new NodeConfigurationException("choice", CASES_FIELD);
     }
-    JsonElement whereElement = configuration.getElement(CASES_FIELD);
+
+    Object whereElement = configuration.getValue(CASES_FIELD);
     if (whereElement instanceof JsonArray) {
       ((JsonArray) whereElement).iterator().forEachRemaining(
           caseNodeConfig -> {
@@ -86,14 +86,15 @@ public class ChoiceNode extends DefaultSubRouteNode {
           new NodeConfiguration((JsonObject) whereElement));
       this.addNode(filter);
     }
-    if (configuration.containsField(OTHERWISE_FIELD)) {
-      JsonArray otherwisePathConfig = configuration.getArray(OTHERWISE_FIELD);
+    if (configuration.containsKey(OTHERWISE_FIELD)) {
+      JsonArray otherwisePathConfig = configuration
+          .getJsonArray(OTHERWISE_FIELD);
       if (otherwisePathConfig != null) {
 
         // Build pipeline configuration
         NodeConfiguration pipelineConfig = new NodeConfiguration();
         pipelineConfig.setType(PipelineNode.TYPE);
-        pipelineConfig.putArray(NODES_FIELD, otherwisePathConfig);
+        pipelineConfig.put(NODES_FIELD, otherwisePathConfig);
         PipelineNode pipeline = (PipelineNode) ScanningNodeBuilder
             .getInstance().getNodeInstance(route, pipelineConfig);
         this.setOtherwise(pipeline);

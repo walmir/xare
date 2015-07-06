@@ -1,9 +1,10 @@
 package wa.xare.core;
 
-import java.util.List;
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 
-import org.vertx.java.core.logging.Logger;
-import org.vertx.java.platform.Verticle;
+import java.util.List;
 
 import wa.xare.core.node.Node;
 import wa.xare.core.node.NodeConfiguration;
@@ -14,11 +15,11 @@ import wa.xare.core.node.endpoint.EndpointConfiguration;
 import wa.xare.core.node.endpoint.EndpointDirection;
 import wa.xare.core.packet.Packet;
 
-public class DefaultRoute extends Verticle implements Route {
+public class DefaultRoute extends AbstractVerticle implements Route {
 
-  private Logger logger;
+  private static final Logger LOGGER = LoggerFactory
+      .getLogger(DefaultRoute.class);
 
-  // private EndpointBuilder endpointBuilder;
 
   private String name;
 
@@ -34,8 +35,8 @@ public class DefaultRoute extends Verticle implements Route {
     this.incomingEndpoint = incomingEndpoint;
   }
 
-  public List<Node> getPipeline() {
-    return pipeline.getNodes();
+  public PipelineNode getPipeline() {
+    return pipeline;
   }
 
   public void setNodes(List<Node> nodes) {
@@ -65,20 +66,17 @@ public class DefaultRoute extends Verticle implements Route {
 
   @Override
   public void start() {
-    logger = container.logger();
-    // endpointBuilder = new EndpointBuilder(this);
-
-    RouteConfiguration config = new RouteConfiguration(container.config());
+    RouteConfiguration config = new RouteConfiguration(config());
     configureRoute(config);
 
-    logger.info("starting route " + name);
+    LOGGER.info("starting route " + name);
   }
 
   private void endRoute(boolean success, Packet packet) {
     if (success) {
-      logger.debug("route finished successfully");
+      LOGGER.debug("route finished successfully");
     } else {
-      logger.error("route finished with errors");
+      LOGGER.error("route finished with errors");
     }
   }
 
@@ -134,5 +132,12 @@ public class DefaultRoute extends Verticle implements Route {
   public void setPipeline(PipelineNode pipeline) {
     this.pipeline = pipeline;
   }
+
+  @Override
+  public void stop() throws Exception {
+    super.stop();
+  }
+  
+  
 
 }

@@ -1,35 +1,55 @@
 package wa.xare.core.integration.java;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.vertx.testtools.VertxAssert.fail;
-import static org.vertx.testtools.VertxAssert.testComplete;
+import io.vertx.core.DeploymentOptions;
+import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+import io.vertx.ext.unit.TestContext;
+import io.vertx.ext.unit.junit.VertxUnitRunner;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.json.JsonObject;
-import org.vertx.testtools.TestVerticle;
+import org.junit.runner.RunWith;
 
 import wa.xare.core.DefaultRoute;
 import wa.xare.core.RouteConfiguration;
 import wa.xare.core.node.NodeConfiguration;
-import wa.xare.core.node.NodeType;
 import wa.xare.core.node.endpoint.EndpointConfiguration;
 import wa.xare.core.node.endpoint.EndpointDirection;
 import wa.xare.core.node.endpoint.EndpointTypeNames;
 import wa.xare.core.selector.SelectorConfiguration;
 
-public class ChoiceNodeIntegrationTest extends TestVerticle {
+@RunWith(VertxUnitRunner.class)
+public class ChoiceNodeIntegrationTest {
 
   private static final String IN_ADDRESS = "in-address";
   private static final String OUT1_ADDRESS = "out1-address";
   private static final String OUT2_ADDRESS = "out2-address";
   private static final String OUT_OTHERWISE_ADDRESS = "out-otherwise-address";
 
+  Vertx vertx;
+
   JsonObject obj1 = new JsonObject("{\"value\":1}");
   JsonObject obj2 = new JsonObject("{\"value\":2}");
   JsonObject obj3 = new JsonObject("{\"value\":3}");
 
-  public void configureAndDeployRoute() {
+  @Before
+  public void before(TestContext context) {
+    vertx = Vertx.vertx();
+
+    JsonObject routeConfig = configureRoute();
+    vertx.deployVerticle(DefaultRoute.class.getName(), new DeploymentOptions()
+        .setConfig(routeConfig).setWorker(true), context.asyncAssertSuccess());
+  }
+
+  @After
+  public void after(TestContext context) {
+    vertx.close(context.asyncAssertSuccess());
+  }
+
+  public JsonObject configureRoute() {
     RouteConfiguration rConfig = new RouteConfiguration();
     rConfig.setName("choice-route");
     rConfig.setIncomingEndpointConfiguration(new EndpointConfiguration()
@@ -38,7 +58,7 @@ public class ChoiceNodeIntegrationTest extends TestVerticle {
         .withEndpointDirection(EndpointDirection.INCOMING));
 
     NodeConfiguration choiceConfig = new NodeConfiguration()
-        .withType(NodeType.CHOICE);
+      .withType("choice");
     JsonArray cases = new JsonArray();
 
     // 1st Selector
@@ -53,10 +73,10 @@ public class ChoiceNodeIntegrationTest extends TestVerticle {
         .withExpression("$.[?(@.value==2)]");
 
     JsonObject case1 = new JsonObject();
-    case1.putObject("selector", selector1Config);
+    case1.put("selector", selector1Config);
 
     JsonObject case2 = new JsonObject();
-    case2.putObject("selector", selector2Config);
+    case2.put("selector", selector2Config);
 
     EndpointConfiguration end1 = new EndpointConfiguration()
         .withEndpointType(EndpointTypeNames.DEFAULT_DIRECT_ENDPOINT)
@@ -80,83 +100,66 @@ public class ChoiceNodeIntegrationTest extends TestVerticle {
     JsonArray nodePathOtherwise = new JsonArray();
     nodePathOtherwise.add(endOtherwise);
 
-    case1.putArray("nodes", nodePath1);
-    case2.putArray("nodes", nodePath2);
+    case1.put("nodes", nodePath1);
+    case2.put("nodes", nodePath2);
 
     cases.add(case1);
     cases.add(case2);
-    
-    choiceConfig.putArray("cases", cases);
-    choiceConfig.putArray("otherwise", nodePathOtherwise);
+
+    choiceConfig.put("cases", cases);
+    choiceConfig.put("otherwise", nodePathOtherwise);
 
     rConfig.addNodeConfiguration(choiceConfig);
 
-    container.deployWorkerVerticle(DefaultRoute.class.getName(), rConfig, 1,
-        false, r -> {
-          if (r.succeeded()) {
-            startTests();
-          } else {
-            fail(r.cause().getMessage());
-          }
-        });
-
-  }
-
-  @Override
-  public void start() {
-    initialize();
-    configureAndDeployRoute();
+    return rConfig;
   }
 
   @Test
-  public void testFirstPath() {
-    vertx.eventBus().registerHandler(OUT2_ADDRESS, message -> {
-      fail("recieved on wrong address: " + OUT2_ADDRESS);
+  public void testFirstPath(TestContext context) {
+    vertx.eventBus().consumer(OUT2_ADDRESS, message -> {
+      context.fail("recieved on wrong address: " + OUT2_ADDRESS);
     });
 
-    vertx.eventBus().registerHandler(OUT_OTHERWISE_ADDRESS, message -> {
-      fail("recieved on wrong address: " + OUT_OTHERWISE_ADDRESS);
+    vertx.eventBus().consumer(OUT_OTHERWISE_ADDRESS, message -> {
+      context.fail("recieved on wrong address: " + OUT_OTHERWISE_ADDRESS);
     });
 
-    vertx.eventBus().registerHandler(OUT1_ADDRESS, message -> {
+    vertx.eventBus().consumer(OUT1_ADDRESS, message -> {
       assertThat(message.body()).isEqualTo(obj1);
-      testComplete();
     });
 
     vertx.eventBus().send(IN_ADDRESS, obj1);
   }
 
   @Test
-  public void testSecondPath() {
-    vertx.eventBus().registerHandler(OUT2_ADDRESS, message -> {
+  public void testSecondPath(TestContext context) {
+    vertx.eventBus().consumer(OUT2_ADDRESS, message -> {
       assertThat(message.body()).isEqualTo(obj2);
-      testComplete();
     });
 
-    vertx.eventBus().registerHandler(OUT_OTHERWISE_ADDRESS, message -> {
-      fail("recieved on wrong address: " + OUT_OTHERWISE_ADDRESS);
+    vertx.eventBus().consumer(OUT_OTHERWISE_ADDRESS, message -> {
+      context.fail("recieved on wrong address: " + OUT_OTHERWISE_ADDRESS);
     });
 
-    vertx.eventBus().registerHandler(OUT1_ADDRESS, message -> {
-      fail("recieved on wrong address: " + OUT1_ADDRESS);
+    vertx.eventBus().consumer(OUT1_ADDRESS, message -> {
+      context.fail("recieved on wrong address: " + OUT1_ADDRESS);
     });
 
     vertx.eventBus().send(IN_ADDRESS, obj2);
   }
 
   @Test
-  public void testOtherwisePath() {
-    vertx.eventBus().registerHandler(OUT2_ADDRESS, message -> {
-      fail("recieved on wrong address: " + OUT2_ADDRESS);
+  public void testOtherwisePath(TestContext context) {
+    vertx.eventBus().consumer(OUT2_ADDRESS, message -> {
+      context.fail("recieved on wrong address: " + OUT2_ADDRESS);
     });
 
-    vertx.eventBus().registerHandler(OUT_OTHERWISE_ADDRESS, message -> {
+    vertx.eventBus().consumer(OUT_OTHERWISE_ADDRESS, message -> {
       assertThat(message.body()).isEqualTo(obj3);
-      testComplete();
     });
 
-    vertx.eventBus().registerHandler(OUT1_ADDRESS, message -> {
-      fail("recieved on wrong address: " + OUT1_ADDRESS);
+    vertx.eventBus().consumer(OUT1_ADDRESS, message -> {
+      context.fail("recieved on wrong address: " + OUT1_ADDRESS);
     });
 
     vertx.eventBus().send(IN_ADDRESS, obj3);

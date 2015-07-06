@@ -1,7 +1,6 @@
 package wa.xare.core.node.endpoint;
 
-import org.vertx.java.core.json.JsonObject;
-
+import io.vertx.core.json.JsonObject;
 import wa.xare.core.node.NodeConfiguration;
 import wa.xare.core.node.NodeType;
 
@@ -29,7 +28,7 @@ public class EndpointConfiguration extends NodeConfiguration {
 	}
 
 	public void setEndpointDirection(EndpointDirection endpointDirection) {
-		putString(ENDPOINT_DIRECTION_FIELD, endpointDirection.name().toLowerCase());
+    put(ENDPOINT_DIRECTION_FIELD, endpointDirection.name().toLowerCase());
 	}
 
 	public String getEndpointType() {
@@ -37,7 +36,7 @@ public class EndpointConfiguration extends NodeConfiguration {
 	}
 
 	public void setEndpointType(String typeName) {
-		putString(ENDPOINT_TYPE_FIELD, typeName);
+    put(ENDPOINT_TYPE_FIELD, typeName);
 	}
 
 	public String getEndpointAddress() {
@@ -45,7 +44,7 @@ public class EndpointConfiguration extends NodeConfiguration {
 	}
 
 	public void setEndpointAddress(String address) {
-		putString(ENDPOINT_ADDRESS_FIELD, address);
+    put(ENDPOINT_ADDRESS_FIELD, address);
 	}
 
 	public EndpointConfiguration withEndpointType(String typeName) {

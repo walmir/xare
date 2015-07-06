@@ -1,7 +1,6 @@
 package wa.xare.core.node;
 
-import org.vertx.java.core.json.JsonObject;
-
+import io.vertx.core.json.JsonObject;
 import wa.xare.core.selector.SelectorConfiguration;
 
 @SuppressWarnings("serial")
@@ -23,16 +22,16 @@ public class NodeConfiguration extends JsonObject {
   }
 
   public void setType(NodeType type) {
-    putString(NODE_TYPE_FIELD, type.getName());
+    put(NODE_TYPE_FIELD, type.getName());
   }
 
   public SelectorConfiguration getSelector() {
-    JsonObject config = getObject(SELECTOR_CONFIG_FIELD);
+    JsonObject config = getJsonObject(SELECTOR_CONFIG_FIELD);
     return config == null ? null : new SelectorConfiguration(config);
   }
 
   public void setSelector(SelectorConfiguration selector) {
-    putObject(SELECTOR_CONFIG_FIELD, selector);
+    put(SELECTOR_CONFIG_FIELD, selector);
   }
 
   public NodeConfiguration withType(NodeType type) {
@@ -46,7 +45,7 @@ public class NodeConfiguration extends JsonObject {
   }
 
   public void setType(String type) {
-    putString("type", type);
+    put(NODE_TYPE_FIELD, type);
   }
 
   public NodeConfiguration withType(String type) {

@@ -35,8 +35,8 @@
     <mods.directory>target/mods</mods.directory>
 
     <!--Dependency versions-->
-    <vertx.version>2.1.5</vertx.version>
-    <vertx.testtools.version>2.0.3-final</vertx.testtools.version>
+    <vertx.version>3.0.0</vertx.version>
+<!--     <vertx.testtools.version>2.0.3-final</vertx.testtools.version> -->
     <junit.version>4.11</junit.version>
 	<classpath.scanner.version>1.2.5</classpath.scanner.version>
 
@@ -76,10 +76,16 @@
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
-      <artifactId>vertx-platform</artifactId>
+      <artifactId>vertx-unit</artifactId>
       <version>${vertx.version}</version>
-      <scope>provided</scope>
+      <scope>test</scope>
     </dependency>
+<!--     <dependency> -->
+<!--       <groupId>io.vertx</groupId> -->
+<!--       <artifactId>vertx-platform</artifactId> -->
+<!--       <version>${vertx.version}</version> -->
+<!--       <scope>provided</scope> -->
+<!--     </dependency> -->
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-hazelcast</artifactId>
@@ -101,12 +107,12 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>testtools</artifactId>
-      <version>${vertx.testtools.version}</version>
-      <scope>test</scope>
-    </dependency>
+<!--     <dependency> -->
+<!--       <groupId>io.vertx</groupId> -->
+<!--       <artifactId>testtools</artifactId> -->
+<!--       <version>${vertx.testtools.version}</version> -->
+<!--       <scope>test</scope> -->
+<!--     </dependency> -->
 	<dependency>
 	  <groupId>org.assertj</groupId>
 	  <artifactId>assertj-core</artifactId>
@@ -138,10 +144,10 @@
     <plugins>
 
       <!-- The vert.x Maven plugin -->
-      <plugin>
-        <groupId>io.vertx</groupId>
-        <artifactId>vertx-maven-plugin</artifactId>
-        <version>${maven.vertx.plugin.version}</version>
+<!--       <plugin> -->
+<!--         <groupId>io.vertx</groupId> -->
+<!--         <artifactId>vertx-maven-plugin</artifactId> -->
+<!--         <version>${maven.vertx.plugin.version}</version> -->
         <!--
         You can specify extra config to the plugin as required here
         <configuration>
@@ -151,33 +157,33 @@
         </configuration>
         -->
         <!-- Make sure that the plugin uses the vert.x versions from this pom.xml not from its own pom.xml -->
-        <dependencies>
-          <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-platform</artifactId>
-            <version>${vertx.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-core</artifactId>
-            <version>${vertx.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-hazelcast</artifactId>
-            <version>${vertx.version}</version>
-          </dependency>
-        </dependencies>
-        <executions>
-          <execution>
-            <id>PullInDeps</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>pullInDeps</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+<!--         <dependencies> -->
+<!--           <dependency> -->
+<!--             <groupId>io.vertx</groupId> -->
+<!--             <artifactId>vertx-platform</artifactId> -->
+<!--             <version>${vertx.version}</version> -->
+<!--           </dependency> -->
+<!--           <dependency> -->
+<!--             <groupId>io.vertx</groupId> -->
+<!--             <artifactId>vertx-core</artifactId> -->
+<!--             <version>${vertx.version}</version> -->
+<!--           </dependency> -->
+<!--           <dependency> -->
+<!--             <groupId>io.vertx</groupId> -->
+<!--             <artifactId>vertx-hazelcast</artifactId> -->
+<!--             <version>${vertx.version}</version> -->
+<!--           </dependency> -->
+<!--         </dependencies> -->
+<!--         <executions> -->
+<!--           <execution> -->
+<!--             <id>PullInDeps</id> -->
+<!--             <phase>prepare-package</phase> -->
+<!--             <goals> -->
+<!--               <goal>pullInDeps</goal> -->
+<!--             </goals> -->
+<!--           </execution> -->
+<!--         </executions> -->
+<!--       </plugin> -->
 
       <!-- Other plugins required by the build -->
       <plugin>
