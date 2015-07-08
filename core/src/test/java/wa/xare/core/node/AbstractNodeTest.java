@@ -8,9 +8,8 @@ import static org.mockito.Mockito.verify;
 import org.junit.Before;
 import org.junit.Test;
 
-import wa.xare.core.node.AbstractNode;
-import wa.xare.core.node.ProcessingListener;
-import wa.xare.core.node.ProcessingResult;
+import wa.xare.core.api.processing.ProcessingListener;
+import wa.xare.core.api.processing.ProcessingResult;
 
 public class AbstractNodeTest {
 

@@ -1,4 +1,4 @@
-package wa.xare.core.packet;
+package wa.xare.core.api;
 
 public enum PacketSegment {
 

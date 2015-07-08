@@ -1,7 +1,7 @@
-package wa.xare.core.selector;
+package wa.xare.core.api.configuration;
 
 import io.vertx.core.json.JsonObject;
-import wa.xare.core.packet.PacketSegment;
+import wa.xare.core.api.PacketSegment;
 
 public class SelectorConfiguration extends JsonObject {
 

@@ -21,14 +21,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import wa.xare.core.DefaultRoute;
-import wa.xare.core.RouteConfiguration;
+import wa.xare.core.api.EndpointDirection;
+import wa.xare.core.api.PacketSegment;
+import wa.xare.core.api.configuration.EndpointConfiguration;
+import wa.xare.core.api.configuration.NodeConfiguration;
+import wa.xare.core.api.configuration.RouteConfiguration;
+import wa.xare.core.api.configuration.SelectorConfiguration;
 import wa.xare.core.node.LoggerNode;
-import wa.xare.core.node.NodeConfiguration;
-import wa.xare.core.node.endpoint.EndpointConfiguration;
-import wa.xare.core.node.endpoint.EndpointDirection;
 import wa.xare.core.node.endpoint.EndpointTypeNames;
-import wa.xare.core.packet.PacketSegment;
-import wa.xare.core.selector.SelectorConfiguration;
 
 @RunWith(VertxUnitRunner.class)
 public class SplitterNodeIntegrationTest {

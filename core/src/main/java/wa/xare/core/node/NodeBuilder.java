@@ -1,4 +1,4 @@
-package wa.xare.core.node.builder;
+package wa.xare.core.node;
 
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import io.vertx.core.json.JsonArray;
@@ -9,25 +9,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import wa.xare.core.Route;
-import wa.xare.core.node.Node;
-import wa.xare.core.node.NodeConfiguration;
-import wa.xare.core.node.NodeConfigurationException;
-import wa.xare.core.node.endpoint.Endpoint;
-import wa.xare.core.node.endpoint.EndpointConfiguration;
+import wa.xare.core.api.Endpoint;
+import wa.xare.core.api.Node;
+import wa.xare.core.api.Route;
+import wa.xare.core.api.annotation.EndpointType;
+import wa.xare.core.api.annotation.NodeType;
+import wa.xare.core.api.configuration.EndpointConfiguration;
+import wa.xare.core.api.configuration.NodeConfiguration;
 import wa.xare.core.node.subroute.DefaultSubRouteNode;
 
-public class ScanningNodeBuilder {
+public class NodeBuilder {
 
   private static final String NODE_NAME_SUFFIX = "Node";
   private static final String ENDPOINT_NAME_SUFFIX = "Endpoint";
 
-  private static ScanningNodeBuilder instance;
+  private static NodeBuilder instance;
   private final Map<String, Class<Node>> nodeClassMap;
   private final Map<String, Class<Endpoint>> endpointClassMap;
 
   @SuppressWarnings("unchecked")
-  private ScanningNodeBuilder() {
+  private NodeBuilder() {
     nodeClassMap = new HashMap<>();
     endpointClassMap = new HashMap<>();
     new FastClasspathScanner().matchClassesWithAnnotation(
@@ -49,9 +50,9 @@ public class ScanningNodeBuilder {
         }).scan();
   }
 
-  public static ScanningNodeBuilder getInstance() {
+  public static NodeBuilder getInstance() {
     if (instance == null) {
-      instance = new ScanningNodeBuilder();
+      instance = new NodeBuilder();
     }
     return instance;
   }
@@ -78,7 +79,7 @@ public class ScanningNodeBuilder {
 
         nodesConfig.ifPresent(array -> {
           for (Object obj : array) {
-            Node n = ScanningNodeBuilder.getInstance().getNodeInstance(route,
+            Node n = NodeBuilder.getInstance().getNodeInstance(route,
                 new NodeConfiguration((JsonObject) obj));
             ((DefaultSubRouteNode) node).addNode(n);
           }

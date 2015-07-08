@@ -3,10 +3,14 @@ package wa.xare.core.node;
 import java.util.ArrayList;
 import java.util.List;
 
-import wa.xare.core.Route;
+import wa.xare.core.api.Node;
+import wa.xare.core.api.Route;
+import wa.xare.core.api.configuration.NodeConfiguration;
+import wa.xare.core.api.configuration.SelectorConfiguration;
+import wa.xare.core.api.processing.ProcessingListener;
+import wa.xare.core.api.processing.ProcessingResult;
 import wa.xare.core.selector.Selector;
 import wa.xare.core.selector.SelectorBuilder;
-import wa.xare.core.selector.SelectorConfiguration;
 
 public abstract class AbstractNode implements Node {
 

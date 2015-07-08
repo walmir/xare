@@ -12,9 +12,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import wa.xare.core.node.Node;
+import wa.xare.core.api.Node;
+import wa.xare.core.api.Packet;
 import wa.xare.core.packet.DefaultPacket;
-import wa.xare.core.packet.Packet;
 import wa.xare.core.selector.JsonPathSelector;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -55,22 +55,6 @@ public class FilterNodeTest {
     secondPacket = new DefaultPacket();
     secondPacket.setBody(secondBook);
   }
-
-  // @Test
-  // public void testBuildingFilterNode() throws Exception {
-  //
-  // NodeConfiguration filterConfig = new NodeConfiguration()
-  // .withType("filter")
-  // .withSelector(
-  // new SelectorConfiguration().withExpression("someExpression")
-  // .withExpressionLanguage("jsonPath")
-  // .withSegment(PacketSegment.HEADERS));
-  //
-  // FilterNode node = spy(new FilterNode());
-  // node.configure(null, filterConfig);
-  //
-  // node.getSelector().
-  // }
 
   @Test
   public void testFilteringByString() throws Exception {

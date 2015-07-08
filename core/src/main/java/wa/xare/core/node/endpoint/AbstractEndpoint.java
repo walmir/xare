@@ -1,9 +1,12 @@
 package wa.xare.core.node.endpoint;
 
-import wa.xare.core.Route;
+import wa.xare.core.api.Endpoint;
+import wa.xare.core.api.EndpointDirection;
+import wa.xare.core.api.Packet;
+import wa.xare.core.api.Route;
+import wa.xare.core.api.configuration.EndpointConfiguration;
+import wa.xare.core.api.configuration.NodeConfiguration;
 import wa.xare.core.node.AbstractNode;
-import wa.xare.core.node.NodeConfiguration;
-import wa.xare.core.packet.Packet;
 
 public abstract class AbstractEndpoint extends AbstractNode implements
     Endpoint {

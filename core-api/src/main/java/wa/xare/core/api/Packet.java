@@ -1,4 +1,4 @@
-package wa.xare.core.packet;
+package wa.xare.core.api;
 
 import java.io.Serializable;
 import java.util.Map;

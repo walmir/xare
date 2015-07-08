@@ -10,6 +10,8 @@ import java.io.ObjectInputStream;
 import java.util.List;
 import java.util.Map;
 
+import wa.xare.core.api.Packet;
+
 public class PacketBuilder {
 
 	public static Packet build(Message<?> message) {

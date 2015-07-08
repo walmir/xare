@@ -1,7 +1,8 @@
 package wa.xare.core.node.endpoint;
 
 import wa.xare.core.DefaultRoute;
-import wa.xare.core.node.NodeConfiguration;
+import wa.xare.core.api.EndpointDirection;
+import wa.xare.core.api.configuration.NodeConfiguration;
 
 public class DefaultHttpEndpoint extends AbstractEndpoint {
 

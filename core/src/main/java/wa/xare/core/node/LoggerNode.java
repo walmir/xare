@@ -2,13 +2,17 @@ package wa.xare.core.node;
 
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-import wa.xare.core.Route;
-import wa.xare.core.node.builder.NodeType;
-import wa.xare.core.packet.Packet;
+import wa.xare.core.api.Packet;
+import wa.xare.core.api.Route;
+import wa.xare.core.api.annotation.NodeType;
+import wa.xare.core.api.configuration.NodeConfiguration;
+import wa.xare.core.api.processing.ProcessingResult;
 import wa.xare.core.selector.Selector;
 
 @NodeType("logger")
 public class LoggerNode extends AbstractNode {
+
+  public static final String TYPE_NAME = "logger";
 
   public static final String LOG_LEVEL_FIELD = "level";
   private static final String DEFAULT_LOG_LEVEL = "info";

@@ -4,13 +4,13 @@ import java.util.Collections;
 import java.util.List;
 
 import wa.xare.core.ProcessingChain;
-import wa.xare.core.Route;
+import wa.xare.core.api.Node;
+import wa.xare.core.api.Packet;
+import wa.xare.core.api.Route;
+import wa.xare.core.api.configuration.NodeConfiguration;
+import wa.xare.core.api.processing.ProcessingResult;
 import wa.xare.core.node.AbstractNode;
-import wa.xare.core.node.Node;
-import wa.xare.core.node.NodeConfiguration;
 import wa.xare.core.node.PipelineNode;
-import wa.xare.core.node.ProcessingResult;
-import wa.xare.core.packet.Packet;
 
 /**
  * Represents a node that starts a subroute that is traversed independently from

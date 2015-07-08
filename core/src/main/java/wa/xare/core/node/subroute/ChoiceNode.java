@@ -7,16 +7,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import wa.xare.core.node.Node;
-import wa.xare.core.node.NodeConfiguration;
+import wa.xare.core.api.Node;
+import wa.xare.core.api.Packet;
+import wa.xare.core.api.annotation.NodeType;
+import wa.xare.core.api.configuration.NodeConfiguration;
+import wa.xare.core.node.NodeBuilder;
 import wa.xare.core.node.NodeConfigurationException;
 import wa.xare.core.node.PipelineNode;
-import wa.xare.core.node.builder.NodeType;
-import wa.xare.core.node.builder.ScanningNodeBuilder;
-import wa.xare.core.packet.Packet;
 
-@NodeType
+@NodeType(ChoiceNode.TYPE_NAME)
 public class ChoiceNode extends DefaultSubRouteNode {
+
+  public static final String TYPE_NAME = "choice";
 
   public static final String CASES_FIELD = "cases";
   public static final String OTHERWISE_FIELD = "otherwise";
@@ -77,12 +79,12 @@ public class ChoiceNode extends DefaultSubRouteNode {
             NodeConfiguration filterConfig = new NodeConfiguration(
                 (JsonObject) caseNodeConfig);
             filterConfig.setType("filter");
-            Node filter = ScanningNodeBuilder.getInstance().getNodeInstance(
+            Node filter = NodeBuilder.getInstance().getNodeInstance(
                 route, filterConfig);
             this.addNode(filter);
           });
     } else { // JsonObject
-      Node filter = ScanningNodeBuilder.getInstance().getNodeInstance(route,
+      Node filter = NodeBuilder.getInstance().getNodeInstance(route,
           new NodeConfiguration((JsonObject) whereElement));
       this.addNode(filter);
     }
@@ -95,7 +97,7 @@ public class ChoiceNode extends DefaultSubRouteNode {
         NodeConfiguration pipelineConfig = new NodeConfiguration();
         pipelineConfig.setType(PipelineNode.TYPE);
         pipelineConfig.put(NODES_FIELD, otherwisePathConfig);
-        PipelineNode pipeline = (PipelineNode) ScanningNodeBuilder
+        PipelineNode pipeline = (PipelineNode) NodeBuilder
             .getInstance().getNodeInstance(route, pipelineConfig);
         this.setOtherwise(pipeline);
       }

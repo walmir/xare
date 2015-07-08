@@ -1,10 +1,9 @@
-package wa.xare.core.node.endpoint;
+package wa.xare.core.api.configuration;
 
 import io.vertx.core.json.JsonObject;
-import wa.xare.core.node.NodeConfiguration;
-import wa.xare.core.node.NodeType;
+import wa.xare.core.api.Endpoint;
+import wa.xare.core.api.EndpointDirection;
 
-@SuppressWarnings("serial")
 public class EndpointConfiguration extends NodeConfiguration {
 
 	private static final String ENDPOINT_ADDRESS_FIELD = "address";
@@ -12,7 +11,7 @@ public class EndpointConfiguration extends NodeConfiguration {
 	private static final String ENDPOINT_TYPE_FIELD = "endpointType";
 
 	public EndpointConfiguration() {
-		setType(NodeType.ENDPOINT);
+    setType(Endpoint.TYPE_NAME);
 	}
 
 	public EndpointConfiguration(JsonObject config) {

@@ -11,8 +11,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import wa.xare.core.Route;
-import wa.xare.core.node.NodeConfiguration;
+import wa.xare.core.api.EndpointDirection;
+import wa.xare.core.api.Route;
+import wa.xare.core.api.configuration.NodeConfiguration;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AbstractEndpointTest {

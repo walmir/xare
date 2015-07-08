@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import wa.xare.core.api.Packet;
+
 @SuppressWarnings("serial")
 public class DefaultPacket implements Packet {
 

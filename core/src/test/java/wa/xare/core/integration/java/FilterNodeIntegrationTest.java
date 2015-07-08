@@ -16,15 +16,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import wa.xare.core.DefaultRoute;
-import wa.xare.core.RouteConfiguration;
+import wa.xare.core.api.EndpointDirection;
+import wa.xare.core.api.Packet;
+import wa.xare.core.api.configuration.EndpointConfiguration;
+import wa.xare.core.api.configuration.NodeConfiguration;
+import wa.xare.core.api.configuration.RouteConfiguration;
+import wa.xare.core.api.configuration.SelectorConfiguration;
 import wa.xare.core.node.LoggerNode;
-import wa.xare.core.node.NodeConfiguration;
-import wa.xare.core.node.endpoint.EndpointConfiguration;
-import wa.xare.core.node.endpoint.EndpointDirection;
 import wa.xare.core.node.endpoint.EndpointTypeNames;
+import wa.xare.core.node.subroute.FilterNode;
 import wa.xare.core.packet.DefaultPacket;
-import wa.xare.core.packet.Packet;
-import wa.xare.core.selector.SelectorConfiguration;
 
 @RunWith(VertxUnitRunner.class)
 public class FilterNodeIntegrationTest {
@@ -102,14 +103,14 @@ public class FilterNodeIntegrationTest {
         .withEndpointAddress(IN_ADDRESS));
 
     NodeConfiguration filterConfig = new NodeConfiguration()
-      .withType("filter")
+      .withType(FilterNode.TYPE_NAME)
       .withSelector(
         new SelectorConfiguration().withExpression(expression)
             .withExpressionLanguage(
                 SelectorConfiguration.JSON_PATH_EXPRESSION_LANGUAGE));
 
     NodeConfiguration subLoggerNode = new NodeConfiguration()
-        .withType("logger");
+        .withType(LoggerNode.TYPE_NAME);
     subLoggerNode.put(LoggerNode.LOG_LEVEL_FIELD, "info");
 
     EndpointConfiguration subEndpointConfig = new EndpointConfiguration()

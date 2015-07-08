@@ -3,7 +3,7 @@ package wa.xare.core.selector;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import net.minidev.json.JSONArray;
-import wa.xare.core.packet.Packet;
+import wa.xare.core.api.Packet;
 
 import com.jayway.jsonpath.JsonPath;
 

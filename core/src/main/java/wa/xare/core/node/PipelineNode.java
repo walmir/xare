@@ -7,9 +7,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import wa.xare.core.node.builder.NodeType;
-import wa.xare.core.node.builder.ScanningNodeBuilder;
-import wa.xare.core.packet.Packet;
+import wa.xare.core.api.Node;
+import wa.xare.core.api.Packet;
+import wa.xare.core.api.annotation.NodeType;
+import wa.xare.core.api.configuration.NodeConfiguration;
+import wa.xare.core.api.processing.ProcessingListener;
+import wa.xare.core.api.processing.ProcessingResult;
 
 @NodeType
 public class PipelineNode extends AbstractNode {
@@ -76,7 +79,7 @@ public class PipelineNode extends AbstractNode {
     for (Object obj : array) {
       if (obj instanceof JsonObject) {
         NodeConfiguration config = new NodeConfiguration((JsonObject) obj);
-        Node node = ScanningNodeBuilder.getInstance().getNodeInstance(route,
+        Node node = NodeBuilder.getInstance().getNodeInstance(route,
             config);
         addNode(node);
       }

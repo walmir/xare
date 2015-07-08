@@ -11,7 +11,10 @@ import java.util.List;
 import org.junit.Test;
 import org.mockito.InOrder;
 
-import wa.xare.core.packet.Packet;
+import wa.xare.core.api.Node;
+import wa.xare.core.api.Packet;
+import wa.xare.core.api.configuration.NodeConfiguration;
+import wa.xare.core.api.processing.ProcessingResult;
 
 public class PipelineNodeTest {
 
@@ -51,11 +54,11 @@ public class PipelineNodeTest {
   private NodeConfiguration buildPipelineConfiguration() {
 
     NodeConfiguration loggerConfig = new NodeConfiguration()
-        .withType(NodeType.LOGGER);
+        .withType(LoggerNode.TYPE_NAME);
     loggerConfig.put("level", "info");
 
     NodeConfiguration loggerConfig2 = new NodeConfiguration()
-        .withType(NodeType.LOGGER);
+        .withType(LoggerNode.TYPE_NAME);
     loggerConfig2.put("level", "debug");
 
     JsonArray nodes = new JsonArray();

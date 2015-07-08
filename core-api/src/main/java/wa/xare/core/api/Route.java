@@ -1,7 +1,6 @@
-package wa.xare.core;
+package wa.xare.core.api;
 
 import io.vertx.core.Vertx;
-import wa.xare.core.node.endpoint.Endpoint;
 
 public interface Route {
 

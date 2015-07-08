@@ -5,24 +5,45 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
-import wa.xare.core.node.builder.ScanningNodeBuilder;
+import wa.xare.core.api.Endpoint;
+import wa.xare.core.api.EndpointDirection;
+import wa.xare.core.api.Node;
+import wa.xare.core.api.PacketSegment;
+import wa.xare.core.api.configuration.EndpointConfiguration;
+import wa.xare.core.api.configuration.NodeConfiguration;
+import wa.xare.core.api.configuration.SelectorConfiguration;
 import wa.xare.core.node.endpoint.DirectEndpoint;
-import wa.xare.core.node.endpoint.Endpoint;
-import wa.xare.core.node.endpoint.EndpointConfiguration;
-import wa.xare.core.node.endpoint.EndpointDirection;
 import wa.xare.core.node.endpoint.EndpointTypeNames;
+import wa.xare.core.node.subroute.FilterNode;
 import wa.xare.core.node.subroute.SplitterNode;
-import wa.xare.core.packet.PacketSegment;
 import wa.xare.core.selector.JsonPathSelector;
-import wa.xare.core.selector.SelectorConfiguration;
 
-public class ScanningNodeBuilderTest {
+public class NodeBuilderTest {
 
-  private ScanningNodeBuilder builder;
+  private NodeBuilder builder;
 
   @Before
   public void prepare() {
-    builder = ScanningNodeBuilder.getInstance();
+    builder = NodeBuilder.getInstance();
+  }
+
+  @Test
+  public void testAnnotationScanning() {
+    builder = NodeBuilder.getInstance();
+    assertThat(builder).isNotNull();
+  }
+
+  @Test
+  public void testBuildFilterNode() {
+    NodeConfiguration filterConfig = new NodeConfiguration().withType(
+        FilterNode.TYPE_NAME)
+        .withSelector(
+            new SelectorConfiguration().withExpression("someExpression")
+                .withExpressionLanguage("jsonPath")
+                .withSegment(PacketSegment.BODY));
+    Node node = NodeBuilder.getInstance().getNodeInstance(null,
+        filterConfig);
+    assertThat(node).isInstanceOf(FilterNode.class);
   }
 
   @Test
@@ -31,7 +52,7 @@ public class ScanningNodeBuilderTest {
         .withEndpointDirection(EndpointDirection.OUTGOING).withEndpointType(
             EndpointTypeNames.DEFAULT_DIRECT_ENDPOINT);
     NodeConfiguration loggerNodeConfig = new NodeConfiguration()
-        .withType(NodeType.LOGGER);
+        .withType(LoggerNode.TYPE_NAME);
 
     assertThat(builder.getNodeInstance(null, endpointConfig)).isInstanceOf(
         Endpoint.class);
@@ -46,7 +67,7 @@ public class ScanningNodeBuilderTest {
     String token = "token";
 
     NodeConfiguration splitterConfig = new NodeConfiguration().withType(
-        NodeType.SPLITTER).withSelector(
+        SplitterNode.TYPE_NAME).withSelector(
         new SelectorConfiguration().withExpressionLanguage(language)
             .withSegment(PacketSegment.HEADERS).withExpression(expression));
     splitterConfig.put(SplitterNode.GROUP_FIELD, 1);
@@ -76,4 +97,5 @@ public class ScanningNodeBuilderTest {
     assertThat(point).isInstanceOf(DirectEndpoint.class);
 
   }
+
 }

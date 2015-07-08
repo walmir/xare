@@ -1,6 +1,6 @@
 package wa.xare.core.node.endpoint;
 
-import wa.xare.core.Route;
+import wa.xare.core.api.Route;
 
 public class EndpointBuilder {
 

@@ -1,4 +1,4 @@
-package wa.xare.core.node.endpoint;
+package wa.xare.core.api;
 
 public enum EndpointDirection {
 	INCOMING,

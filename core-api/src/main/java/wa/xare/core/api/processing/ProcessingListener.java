@@ -1,4 +1,4 @@
-package wa.xare.core.node;
+package wa.xare.core.api.processing;
 
 public interface ProcessingListener {
 

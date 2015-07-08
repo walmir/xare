@@ -8,9 +8,9 @@ import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 
+import wa.xare.core.api.Packet;
+import wa.xare.core.api.PacketSegment;
 import wa.xare.core.packet.DefaultPacket;
-import wa.xare.core.packet.Packet;
-import wa.xare.core.packet.PacketSegment;
 
 
 public class JsonPathSelectorTest {

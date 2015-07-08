@@ -11,10 +11,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import wa.xare.core.node.Node;
+import wa.xare.core.api.Node;
+import wa.xare.core.api.Packet;
 import wa.xare.core.node.PipelineNode;
 import wa.xare.core.packet.DefaultPacket;
-import wa.xare.core.packet.Packet;
 import wa.xare.core.selector.JsonPathSelector;
 import wa.xare.core.selector.Selector;
 

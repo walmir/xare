@@ -6,14 +6,16 @@ import io.vertx.core.logging.LoggerFactory;
 
 import java.util.List;
 
-import wa.xare.core.node.Node;
-import wa.xare.core.node.NodeConfiguration;
+import wa.xare.core.api.Endpoint;
+import wa.xare.core.api.EndpointDirection;
+import wa.xare.core.api.Node;
+import wa.xare.core.api.Packet;
+import wa.xare.core.api.Route;
+import wa.xare.core.api.configuration.EndpointConfiguration;
+import wa.xare.core.api.configuration.NodeConfiguration;
+import wa.xare.core.api.configuration.RouteConfiguration;
+import wa.xare.core.node.NodeBuilder;
 import wa.xare.core.node.PipelineNode;
-import wa.xare.core.node.builder.ScanningNodeBuilder;
-import wa.xare.core.node.endpoint.Endpoint;
-import wa.xare.core.node.endpoint.EndpointConfiguration;
-import wa.xare.core.node.endpoint.EndpointDirection;
-import wa.xare.core.packet.Packet;
 
 public class DefaultRoute extends AbstractVerticle implements Route {
 
@@ -104,7 +106,7 @@ public class DefaultRoute extends AbstractVerticle implements Route {
     // logger.info("Node " + nc);
     // this.addNode(builder.buildNode(nc));
     // }
-    ScanningNodeBuilder builder = ScanningNodeBuilder.getInstance();
+    NodeBuilder builder = NodeBuilder.getInstance();
     for (NodeConfiguration nc : nodeConfigs) {
       Node n = builder.getNodeInstance(this, nc);
       this.addNode(n);
@@ -115,7 +117,7 @@ public class DefaultRoute extends AbstractVerticle implements Route {
     inpointConfig.setEndpointDirection(EndpointDirection.INCOMING);
     inpointConfig.setType("endpoint");
 
-    incomingEndpoint = ScanningNodeBuilder.getInstance()
+    incomingEndpoint = NodeBuilder.getInstance()
         .getEndpointInstance(this, inpointConfig);
 
     // this.incomingEndpoint = endpointBuilder.buildEndpoint(inpointConfig);

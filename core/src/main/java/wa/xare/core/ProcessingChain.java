@@ -2,9 +2,9 @@ package wa.xare.core;
 
 import java.util.List;
 
-import wa.xare.core.node.Node;
-import wa.xare.core.node.ProcessingListener;
-import wa.xare.core.packet.Packet;
+import wa.xare.core.api.Node;
+import wa.xare.core.api.Packet;
+import wa.xare.core.api.processing.ProcessingListener;
 
 public interface ProcessingChain {
 

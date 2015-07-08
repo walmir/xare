@@ -1,7 +1,8 @@
-package wa.xare.core.node;
+package wa.xare.core.api;
 
-import wa.xare.core.Route;
-import wa.xare.core.packet.Packet;
+import wa.xare.core.api.configuration.NodeConfiguration;
+import wa.xare.core.api.processing.ProcessingListener;
+
 
 public interface Node {
 

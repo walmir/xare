@@ -7,15 +7,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import wa.xare.core.node.NodeConfiguration;
+import wa.xare.core.api.Packet;
+import wa.xare.core.api.annotation.NodeType;
+import wa.xare.core.api.configuration.NodeConfiguration;
 import wa.xare.core.node.PipelineNode;
 import wa.xare.core.node.ProcessingException;
-import wa.xare.core.node.builder.NodeType;
-import wa.xare.core.packet.Packet;
 import wa.xare.core.packet.PacketBuilder;
 
 @NodeType
 public class SplitterNode extends DefaultSubRouteNode {
+
+  public static final String TYPE_NAME = "splitter";
 
   public static final String GROUP_FIELD = "group";
   public static final String TOKEN_FIELD = "token";

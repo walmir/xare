@@ -1,13 +1,14 @@
 package wa.xare.core.node.subroute;
 
 import io.vertx.core.json.JsonArray;
-import wa.xare.core.node.NodeConfiguration;
-import wa.xare.core.node.builder.NodeType;
-import wa.xare.core.packet.Packet;
+import wa.xare.core.api.Packet;
+import wa.xare.core.api.annotation.NodeType;
+import wa.xare.core.api.configuration.NodeConfiguration;
 
 @NodeType
 public class FilterNode extends DefaultSubRouteNode {
 	
+  public static final String TYPE_NAME = "filter";
 	
 	@Override
   public void doProcess(Packet packet) {

@@ -1,6 +1,6 @@
-package wa.xare.core.node;
+package wa.xare.core.api.processing;
 
-import wa.xare.core.packet.Packet;
+import wa.xare.core.api.Packet;
 
 public class ProcessingResult {
 

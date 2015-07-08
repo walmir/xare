@@ -1,13 +1,10 @@
-package wa.xare.core;
+package wa.xare.core.api.configuration;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import wa.xare.core.node.NodeConfiguration;
-import wa.xare.core.node.endpoint.EndpointConfiguration;
 
 public class RouteConfiguration extends JsonObject {
 

@@ -1,4 +1,4 @@
-package wa.xare.core.node.builder;
+package wa.xare.core.api.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,11 +7,14 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface EndpointType {
+public @interface NodeType {
 
   /**
-   * Defines the type of the endpoint. If not set the name of the class is used
-   * instead.
+   * <p>
+   * Defines the type of the node. If not set the name of the class is used
+   * instead, removing the suffix {@code Node} if it existed.
+   * </p>
+   * 
    */
   String value() default "";
 
