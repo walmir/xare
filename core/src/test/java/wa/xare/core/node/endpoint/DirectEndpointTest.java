@@ -21,10 +21,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import wa.xare.core.DefaultRoute;
-import wa.xare.core.api.Endpoint;
-import wa.xare.core.api.EndpointDirection;
-import wa.xare.core.api.configuration.EndpointConfiguration;
-import wa.xare.core.node.NodeBuilder;
+import wa.xare.core.builder.NodeBuilder;
+import wa.xare.core.configuration.EndpointConfiguration;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DirectEndpointTest {

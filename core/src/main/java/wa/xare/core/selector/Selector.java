@@ -1,8 +1,8 @@
 package wa.xare.core.selector;
 
 import io.vertx.core.json.JsonArray;
-import wa.xare.core.api.Packet;
-import wa.xare.core.api.PacketSegment;
+import wa.xare.core.packet.Packet;
+import wa.xare.core.packet.PacketSegment;
 
 public interface Selector {
 

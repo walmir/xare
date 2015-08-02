@@ -19,6 +19,7 @@ books to single items, then logs the title of each book.
 Now, to send the JSON message shown below, with an array of two books, simply start the sender module with the following command 
 ```vertx runzip target/sender-<version>-mod.zip -cluster```
 
+For more, read the [manual](manual.md) or checkout the [examples](examples.md)
 
 ### JSON Message
 ```

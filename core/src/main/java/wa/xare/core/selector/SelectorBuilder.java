@@ -1,7 +1,7 @@
 package wa.xare.core.selector;
 
-import wa.xare.core.api.PacketSegment;
-import wa.xare.core.api.configuration.SelectorConfiguration;
+import wa.xare.core.configuration.SelectorConfiguration;
+import wa.xare.core.packet.PacketSegment;
 
 public class SelectorBuilder {
 

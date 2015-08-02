@@ -1,11 +1,14 @@
 package wa.xare.core.selector;
 
-import wa.xare.core.api.PacketSegment;
+import wa.xare.core.annotation.Field;
+import wa.xare.core.packet.PacketSegment;
 
 public abstract class AbstractSelector implements Selector {
 
+  @Field(required = true)
   private String expression;
 
+  @Field
   private PacketSegment segment = PacketSegment.BODY;
 
   public AbstractSelector(String expression) {

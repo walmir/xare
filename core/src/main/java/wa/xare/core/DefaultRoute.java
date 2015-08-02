@@ -6,27 +6,28 @@ import io.vertx.core.logging.LoggerFactory;
 
 import java.util.List;
 
-import wa.xare.core.api.Endpoint;
-import wa.xare.core.api.EndpointDirection;
-import wa.xare.core.api.Node;
-import wa.xare.core.api.Packet;
-import wa.xare.core.api.Route;
-import wa.xare.core.api.configuration.EndpointConfiguration;
-import wa.xare.core.api.configuration.NodeConfiguration;
-import wa.xare.core.api.configuration.RouteConfiguration;
-import wa.xare.core.node.NodeBuilder;
+import wa.xare.core.annotation.Field;
+import wa.xare.core.builder.NodeBuilder;
+import wa.xare.core.configuration.EndpointConfiguration;
+import wa.xare.core.configuration.NodeConfiguration;
+import wa.xare.core.configuration.RouteConfiguration;
+import wa.xare.core.node.Node;
 import wa.xare.core.node.PipelineNode;
+import wa.xare.core.node.endpoint.Endpoint;
+import wa.xare.core.node.endpoint.EndpointDirection;
+import wa.xare.core.packet.Packet;
 
 public class DefaultRoute extends AbstractVerticle implements Route {
 
   private static final Logger LOGGER = LoggerFactory
       .getLogger(DefaultRoute.class);
 
-
   private String name;
 
+  @Field("from")
   private Endpoint incomingEndpoint;
 
+  @Field("nodes")
   private PipelineNode pipeline;
 
   public Endpoint getIncomingEndpoint() {
@@ -139,6 +140,14 @@ public class DefaultRoute extends AbstractVerticle implements Route {
   public void stop() throws Exception {
     super.stop();
   }
+
+  // @Override
+  // public HttpServer getServer() {
+  // if (server == null) {
+  // server = vertx.createHttpServer();
+  // }
+  // return server;
+  // }
   
   
 

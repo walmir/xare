@@ -3,10 +3,9 @@ package wa.xare.core.node.endpoint;
 
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-import wa.xare.core.api.EndpointDirection;
-import wa.xare.core.api.Packet;
-import wa.xare.core.api.annotation.EndpointType;
-import wa.xare.core.api.configuration.NodeConfiguration;
+import wa.xare.core.annotation.EndpointType;
+import wa.xare.core.configuration.NodeConfiguration;
+import wa.xare.core.packet.Packet;
 import wa.xare.core.packet.PacketBuilder;
 
 @EndpointType

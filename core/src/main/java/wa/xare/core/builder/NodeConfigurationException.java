@@ -1,4 +1,4 @@
-package wa.xare.core.node;
+package wa.xare.core.builder;
 
 @SuppressWarnings("serial")
 public class NodeConfigurationException extends RuntimeException {

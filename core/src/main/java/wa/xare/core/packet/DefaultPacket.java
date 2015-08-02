@@ -1,5 +1,7 @@
 package wa.xare.core.packet;
 
+import io.vertx.core.json.JsonObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutput;
@@ -8,16 +10,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import wa.xare.core.api.Packet;
-
 @SuppressWarnings("serial")
 public class DefaultPacket implements Packet {
 
-  private Map<String, String> headers;
+  private Map<String, Object> headers;
   private Object body;
 
   @Override
-  public void addHeader(String name, String value) {
+  public void addHeader(String name, Object value) {
+    if (!(value instanceof String || value instanceof JsonObject)) {
+      throw new IllegalArgumentException(
+          "value of header can only be a String or JsonObject");
+    }
+
     if (headers == null) {
       headers = new HashMap<>();
     }
@@ -26,7 +31,7 @@ public class DefaultPacket implements Packet {
   }
 
   @Override
-  public String getHeader(String name) {
+  public Object getHeader(String name) {
     if (headers != null && name != null) {
       return headers.get(name);
     }
@@ -34,7 +39,7 @@ public class DefaultPacket implements Packet {
   }
 
   @Override
-  public Map<String, String> getHeaders() {
+  public Map<String, Object> getHeaders() {
     return headers;
   }
 
@@ -65,7 +70,7 @@ public class DefaultPacket implements Packet {
 
     DefaultPacket packet = new DefaultPacket();
     packet.setBody(this.getBody());
-    for (Entry<String, String> headerEntry : headers.entrySet()) {
+    for (Entry<String, Object> headerEntry : headers.entrySet()) {
       packet.addHeader(headerEntry.getKey(), headerEntry.getValue());
     }
 

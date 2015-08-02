@@ -14,14 +14,14 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import wa.xare.core.api.EndpointDirection;
-import wa.xare.core.api.Packet;
-import wa.xare.core.api.configuration.EndpointConfiguration;
-import wa.xare.core.api.configuration.NodeConfiguration;
-import wa.xare.core.api.configuration.RouteConfiguration;
-import wa.xare.core.api.processing.ProcessingResult;
+import wa.xare.core.configuration.EndpointConfiguration;
+import wa.xare.core.configuration.NodeConfiguration;
+import wa.xare.core.configuration.RouteConfiguration;
 import wa.xare.core.node.AbstractNode;
+import wa.xare.core.node.endpoint.EndpointDirection;
 import wa.xare.core.node.endpoint.EndpointTypeNames;
+import wa.xare.core.packet.Packet;
+import wa.xare.core.packet.ProcessingResult;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultRouteTest {

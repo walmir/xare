@@ -11,10 +11,9 @@ import java.util.List;
 import org.junit.Test;
 import org.mockito.InOrder;
 
-import wa.xare.core.api.Node;
-import wa.xare.core.api.Packet;
-import wa.xare.core.api.configuration.NodeConfiguration;
-import wa.xare.core.api.processing.ProcessingResult;
+import wa.xare.core.configuration.NodeConfiguration;
+import wa.xare.core.packet.Packet;
+import wa.xare.core.packet.ProcessingResult;
 
 public class PipelineNodeTest {
 

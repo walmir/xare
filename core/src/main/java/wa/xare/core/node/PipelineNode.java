@@ -7,18 +7,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import wa.xare.core.api.Node;
-import wa.xare.core.api.Packet;
-import wa.xare.core.api.annotation.NodeType;
-import wa.xare.core.api.configuration.NodeConfiguration;
-import wa.xare.core.api.processing.ProcessingListener;
-import wa.xare.core.api.processing.ProcessingResult;
+import wa.xare.core.annotation.Field;
+import wa.xare.core.annotation.NodeType;
+import wa.xare.core.builder.NodeBuilder;
+import wa.xare.core.configuration.NodeConfiguration;
+import wa.xare.core.packet.Packet;
+import wa.xare.core.packet.ProcessingListener;
+import wa.xare.core.packet.ProcessingResult;
 
 @NodeType
 public class PipelineNode extends AbstractNode {
 
   public static final String TYPE = "pipeline";
 
+  @Field(required = true)
   private List<Node> nodes;
 
   List<ProcessingListener> processingListeners;

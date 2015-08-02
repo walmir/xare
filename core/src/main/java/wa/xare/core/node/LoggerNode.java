@@ -2,11 +2,12 @@ package wa.xare.core.node;
 
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-import wa.xare.core.api.Packet;
-import wa.xare.core.api.Route;
-import wa.xare.core.api.annotation.NodeType;
-import wa.xare.core.api.configuration.NodeConfiguration;
-import wa.xare.core.api.processing.ProcessingResult;
+import wa.xare.core.Route;
+import wa.xare.core.annotation.Field;
+import wa.xare.core.annotation.NodeType;
+import wa.xare.core.configuration.NodeConfiguration;
+import wa.xare.core.packet.Packet;
+import wa.xare.core.packet.ProcessingResult;
 import wa.xare.core.selector.Selector;
 
 @NodeType("logger")
@@ -25,6 +26,8 @@ public class LoggerNode extends AbstractNode {
 
   private Logger logger = LoggerFactory
       .getLogger(LoggerNode.class);
+
+  @Field
 	private String level = INFO;
 
 

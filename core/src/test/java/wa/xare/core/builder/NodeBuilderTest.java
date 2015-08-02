@@ -1,21 +1,22 @@
-package wa.xare.core.node;
+package wa.xare.core.builder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import wa.xare.core.api.Endpoint;
-import wa.xare.core.api.EndpointDirection;
-import wa.xare.core.api.Node;
-import wa.xare.core.api.PacketSegment;
-import wa.xare.core.api.configuration.EndpointConfiguration;
-import wa.xare.core.api.configuration.NodeConfiguration;
-import wa.xare.core.api.configuration.SelectorConfiguration;
+import wa.xare.core.builder.NodeBuilder;
+import wa.xare.core.configuration.EndpointConfiguration;
+import wa.xare.core.configuration.NodeConfiguration;
+import wa.xarimport wa.xare.core.node.LoggerNode;
+import wa.xare.core.node.Node;
 import wa.xare.core.node.endpoint.DirectEndpoint;
+import wa.xare.core.node.endpoint.Endpoint;
+import wa.xare.core.node.endpoint.EndpointDirection;
 import wa.xare.core.node.endpoint.EndpointTypeNames;
 import wa.xare.core.node.subroute.FilterNode;
 import wa.xare.core.node.subroute.SplitterNode;
+import wa.xare.core.packet.PacketSegment;
 import wa.xare.core.selector.JsonPathSelector;
 
 public class NodeBuilderTest {

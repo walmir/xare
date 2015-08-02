@@ -7,13 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import wa.xare.core.api.Node;
-import wa.xare.core.api.Packet;
-import wa.xare.core.api.annotation.NodeType;
-import wa.xare.core.api.configuration.NodeConfiguration;
-import wa.xare.core.node.NodeBuilder;
-import wa.xare.core.node.NodeConfigurationException;
+import wa.xare.core.annotation.Field;
+import wa.xare.core.annotation.NodeType;
+import wa.xare.core.builder.NodeBuilder;
+import wa.xare.core.builder.NodeConfigurationException;
+import wa.xare.core.configuration.NodeConfiguration;
+import wa.xare.core.node.Node;
 import wa.xare.core.node.PipelineNode;
+import wa.xare.core.packet.Packet;
 
 @NodeType(ChoiceNode.TYPE_NAME)
 public class ChoiceNode extends DefaultSubRouteNode {
@@ -23,8 +24,10 @@ public class ChoiceNode extends DefaultSubRouteNode {
   public static final String CASES_FIELD = "cases";
   public static final String OTHERWISE_FIELD = "otherwise";
 
+  @Field(CASES_FIELD)
   private List<FilterNode> whereNodes;
 
+  @Field(OTHERWISE_FIELD)
   private PipelineNode otherwise;
 
   public ChoiceNode() {

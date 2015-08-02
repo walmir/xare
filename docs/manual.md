@@ -1,34 +1,34 @@
-# User Guide
+# Manual
 
 
-this is a work in progress...
-This guide serves as 
+work in progress ...
+
+## Content
+
+* [Enterprise Integration Patterns](#eip)
+* [Endpoints](#Endpoints)
+* [Nodes](#Nodes)
+* [Selectors](#Selectors)
 
 
-## Getting started
+<div id="eip" />
 
-Download Xare project directy from GitHub. A release for the Vert.x Module repository is in the works.
-
-
-
-
-## Endpoints
-
-Routes communicate with the world and each other through endpoints. Once deployed, the route listens to messages received by its incoming-endpoint, and can pass messages on through one or more outgoing endpoints. \n
-
-Currently only one type of Endpoints is implemneted, namely `direct-endpoint`.
-This type of endpoints receives or sends messages directly from or to the Vert.x `EventBus`. \n
-
-Route have a single incoming endpoint but can have multiple outgoing ones, if there are sub-routes.
-
-## Enterprise Integration Patterns (EIPs)
+## Enterprise Integration Patterns (EIP)
 
 A goal of this project is to implement as many of the Enterprise Integration Patterns from the book by Gregor Hohpe and Bobby Woolf as possible.
-EIPs are implemented as `Nodes` that make up a route. \n
+EIPs are implemented as `Nodes` that make up a route. 
+Routes have an incoming endpoint and can have multiple outgoing ones. These allows them to receive and send packets.
+Each node along the route then processes the packet according to the EIP it implements.
+
+
+
 Currently the following EIPs are implemented.
 
+*	Pipeline: Passes a packet through a chain of nodes
 *   Splitter: splits an array into single items and passes them on to the next node.
 *   Filter: only passes packets on that fulfill a given predicate.
+*	Choice: 
+*	Logger:
 
 ### Sub-route Nodes
 
@@ -39,6 +39,15 @@ Nodes like filter and splitter that pass only part of incoming packets on the ne
 * Choice (Message Router)
 * Aggregator
 
+
+## Endpoints
+
+Routes communicate with the world and each other through endpoints. Once deployed, the route listens to messages received by its incoming-endpoint, and can pass messages on through one or more outgoing endpoints. \n
+
+Currently only one type of Endpoints is implemneted, namely `direct-endpoint`.
+This type of endpoints receives or sends messages directly from or to the Vert.x `EventBus`. \n
+
+Route have a single incoming endpoint but can have multiple outgoing ones, if there are sub-routes.
 
 ## Selectors
 

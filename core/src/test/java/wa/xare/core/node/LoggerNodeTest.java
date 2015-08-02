@@ -18,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import wa.xare.core.api.Packet;
+import wa.xare.core.packet.Packet;
 
 
 @RunWith(MockitoJUnitRunner.class)

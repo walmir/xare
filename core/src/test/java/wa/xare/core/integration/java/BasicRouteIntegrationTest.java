@@ -15,11 +15,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import wa.xare.core.DefaultRoute;
-import wa.xare.core.api.EndpointDirection;
-import wa.xare.core.api.configuration.EndpointConfiguration;
-import wa.xare.core.api.configuration.NodeConfiguration;
-import wa.xare.core.api.configuration.RouteConfiguration;
+import wa.xare.core.configuration.EndpointConfiguration;
+import wa.xare.core.configuration.NodeConfiguration;
+import wa.xare.core.configuration.RouteConfiguration;
 import wa.xare.core.node.LoggerNode;
+import wa.xare.core.node.endpoint.EndpointDirection;
 import wa.xare.core.node.endpoint.EndpointTypeNames;
 
 @RunWith(VertxUnitRunner.class)
