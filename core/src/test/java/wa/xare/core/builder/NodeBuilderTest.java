@@ -1,102 +1,178 @@
 package wa.xare.core.builder;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+import io.vertx.core.json.JsonObject;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
-import wa.xare.core.builder.NodeBuilder;
-import wa.xare.core.configuration.EndpointConfiguration;
-import wa.xare.core.configuration.NodeConfiguration;
-import wa.xarimport wa.xare.core.node.LoggerNode;
+import wa.xare.core.builder.mocks.IMockComponent;
+import wa.xare.core.builder.mocks.MockComponent;
+import wa.xare.core.builder.mocks.MockEndpoint;
+import wa.xare.core.builder.mocks.MockNodeComplex;
+import wa.xare.core.builder.mocks.MockNodeWithComponents;
 import wa.xare.core.node.Node;
-import wa.xare.core.node.endpoint.DirectEndpoint;
 import wa.xare.core.node.endpoint.Endpoint;
-import wa.xare.core.node.endpoint.EndpointDirection;
-import wa.xare.core.node.endpoint.EndpointTypeNames;
-import wa.xare.core.node.subroute.FilterNode;
-import wa.xare.core.node.subroute.SplitterNode;
-import wa.xare.core.packet.PacketSegment;
-import wa.xare.core.selector.JsonPathSelector;
 
+@RunWith(MockitoJUnitRunner.class)
 public class NodeBuilderTest {
 
-  private NodeBuilder builder;
+  private final static String NODE_TYPE_NAME = "mockNodeComplex";
+  private final static String ENDPOINT_TYPE_NAME = "mockNodeComplex";
+  private final static String COMPONENT_NODE_TYPE_NAME = "mockNodeWithComponents";
+
+  NodeBuilder builder;
+
+  @Mock
+  NodeDefinitionBuilder defBuilder;
+  private NodeDefinitionBuilder tempDefBuilder;
 
   @Before
-  public void prepare() {
-    builder = NodeBuilder.getInstance();
+  public void setup() {
+
+    tempDefBuilder = NodeDefinitionBuilder.setInstance(defBuilder);
+
+    NodeDefinition mockNodeDef = new NodeDefinition(MockNodeComplex.class);
+    NodeDefinition mockEndpointDef = new NodeDefinition(MockEndpoint.class);
+    NodeDefinition mockNodeWithComponentsDef = new NodeDefinition(MockNodeWithComponents.class);
+    
+    NodeDefinition mockComponentDef = new NodeDefinition(MockComponent.class);
+    
+    when(defBuilder.getNodeDefinition(NODE_TYPE_NAME)).thenReturn(mockNodeDef);
+    when(defBuilder.getEndpointDefinition(ENDPOINT_TYPE_NAME)).thenReturn(
+        mockEndpointDef);
+    when(defBuilder.getNodeDefinition(COMPONENT_NODE_TYPE_NAME)).thenReturn(
+        mockNodeWithComponentsDef);
+
+    ComponentContainer cc = new ComponentContainer("anything");
+    cc.addComponentDefinition("mockComponent", mockComponentDef);
+    
+    when(defBuilder.getComponentContainer("iMockComponent")).thenReturn(cc);
+
+    builder = new NodeBuilder(null);
+  }
+
+  @After
+  public void tearDown() {
+    NodeDefinitionBuilder.setInstance(tempDefBuilder);
+  }
+
+
+
+  // @Test
+  // public void testGetEndpointInstance() throws Exception {
+  //
+  // Map<String, PropertyDescriptor> map = Arrays.stream(
+  // Introspector.getBeanInfo(MockClass.class)
+  // .getPropertyDescriptors())
+  // .collect(Collectors.toMap(pd -> pd.getDisplayName(), pd -> pd));
+  //
+  // // map.keySet().forEach(System.out::println);
+  //
+  // PropertyDescriptor[] pds = Introspector.getBeanInfo(MockClass.class)
+  // .getPropertyDescriptors();
+    // for (PropertyDescriptor pd : pds) {
+    // System.out.println(pd.getName());
+    // System.out.println(pd.getDisplayName());
+    // System.out.println(pd.getShortDescription());
+    // System.out.println(pd.getPropertyEditorClass());
+    // }
+
+  // }
+
+  @Test
+  public void testComplexMock() throws Exception {
+
+    String config = 
+          "{"
+        + " \"type\": \"" + NODE_TYPE_NAME +"\","
+        + " \"stringField\": \"stringValue\","
+        + " \"intField\": 3,"
+        + " \"bool\":true,"
+        + " \"strings\": [\"one\",\"two\",\"three\"],"
+        + " \"theList\": [4,3,2,1,0],"
+        + " \"accessible\": \"directlySet\""
+        + "}";
+    
+    JsonObject jsonConfig = new JsonObject(config);
+
+    Node nodeInstance = builder.getNodeInstance(jsonConfig);
+    assertThat(nodeInstance).isExactlyInstanceOf(MockNodeComplex.class);
+
+    MockNodeComplex node = (MockNodeComplex) nodeInstance;
+    assertThat(node.getIntField()).isEqualTo(3);
+    assertThat(node.isBooleanField()).isEqualTo(true);
+    assertThat(node.getStringField()).isEqualTo("stringValue");
+    assertThat(node.getStrings()).containsExactly("one", "two", "three");
+    assertThat(node.getIntList()).containsOnly(4, 3, 2, 1, 0);
+    assertThat(node.remainsEmpty).isNullOrEmpty();
+    assertThat(node.accessible).isEqualTo("directlySet");
+
   }
 
   @Test
-  public void testAnnotationScanning() {
-    builder = NodeBuilder.getInstance();
-    assertThat(builder).isNotNull();
+  public void testBuildEndpoint() {
+    String config = 
+        "{"
+      + " \"type\": \"" + Endpoint.TYPE_NAME + "\","
+      + " \"endpointType\": \"" + ENDPOINT_TYPE_NAME + "\","
+      + " \"someString\": \"someStringValue\""
+      + "}";
+
+    JsonObject jsonConfig = new JsonObject(config);
+
+    Node nodeInstance = builder.getNodeInstance(jsonConfig);
+    assertThat(nodeInstance).isInstanceOf(Endpoint.class);
+    assertThat(nodeInstance).isInstanceOf(MockEndpoint.class);
+
+    MockEndpoint endpoint = (MockEndpoint) nodeInstance;
+    assertThat(endpoint.getSomeString()).isEqualTo("someStringValue");
   }
 
   @Test
-  public void testBuildFilterNode() {
-    NodeConfiguration filterConfig = new NodeConfiguration().withType(
-        FilterNode.TYPE_NAME)
-        .withSelector(
-            new SelectorConfiguration().withExpression("someExpression")
-                .withExpressionLanguage("jsonPath")
-                .withSegment(PacketSegment.BODY));
-    Node node = NodeBuilder.getInstance().getNodeInstance(null,
-        filterConfig);
-    assertThat(node).isInstanceOf(FilterNode.class);
-  }
+  public void testBuildNodeWithComponents() {
+    String config = 
+        "{"
+      + " \"type\": \"" + COMPONENT_NODE_TYPE_NAME +"\","
+      + " \"component\": {"
+      + "                   \"" + IMockComponent.DISCRIMINATOR_NAME + "\": \"mockComponent\","
+      + "                    \"componentField\": \"componentFieldValue\""
+      + "                },"
+      + " \"simpleNode\": {"
+      +                     " \"type\": \"" + NODE_TYPE_NAME +"\","
+      +                     " \"stringField\": \"stringValue\","
+      +                     " \"intField\": 3,"
+      +                     " \"bool\":true,"
+      +                     " \"strings\": [\"one\",\"two\",\"three\"],"
+      +                     " \"theList\": [4,3,2,1,0],"
+      +                     " \"accessible\": \"directlySet\""
+        + "}"
+      + "}";
 
-  @Test
-  public void testBuildNode() throws Exception {
-    NodeConfiguration endpointConfig = new EndpointConfiguration()
-        .withEndpointDirection(EndpointDirection.OUTGOING).withEndpointType(
-            EndpointTypeNames.DEFAULT_DIRECT_ENDPOINT);
-    NodeConfiguration loggerNodeConfig = new NodeConfiguration()
-        .withType(LoggerNode.TYPE_NAME);
+    JsonObject jsonConfig = new JsonObject(config);
 
-    assertThat(builder.getNodeInstance(null, endpointConfig)).isInstanceOf(
-        Endpoint.class);
-    assertThat(builder.getNodeInstance(null, loggerNodeConfig)).isInstanceOf(
-        LoggerNode.class);
-  }
+    Node nodeInstance = builder.getNodeInstance(jsonConfig);
+    assertThat(nodeInstance).isExactlyInstanceOf(MockNodeWithComponents.class);
 
-  @Test
-  public void testBuildSplitterNode() throws Exception {
-    String language = SelectorConfiguration.JSON_PATH_EXPRESSION_LANGUAGE;
-    String expression = "expression";
-    String token = "token";
+    MockComponent component = (MockComponent) ((MockNodeWithComponents) nodeInstance)
+        .getComponent();
+    assertThat(component.getComponentField()).isEqualTo("componentFieldValue");
 
-    NodeConfiguration splitterConfig = new NodeConfiguration().withType(
-        SplitterNode.TYPE_NAME).withSelector(
-        new SelectorConfiguration().withExpressionLanguage(language)
-            .withSegment(PacketSegment.HEADERS).withExpression(expression));
-    splitterConfig.put(SplitterNode.GROUP_FIELD, 1);
-    splitterConfig.put(SplitterNode.TOKEN_FIELD, token);
-
-    Node node = builder.getNodeInstance(null, splitterConfig);
-
-    assertThat(node).isInstanceOf(SplitterNode.class);
-    SplitterNode splitterNode = (SplitterNode) node;
-    assertThat(splitterNode.getGroup()).isEqualTo(1);
-    assertThat(splitterNode.getToken()).isEqualTo(token);
-
-    assertThat(splitterNode.getSelector()).isInstanceOf(JsonPathSelector.class);
-    JsonPathSelector selector = (JsonPathSelector) splitterNode.getSelector();
-    assertThat(selector.getSegment()).isEqualTo(PacketSegment.HEADERS);
-    assertThat(selector.getExpression()).isEqualTo(expression);
-  }
-
-  @Test
-  public void testBuildEndpoint() throws Exception {
-    EndpointConfiguration conf = new EndpointConfiguration()
-        .withEndpointAddress("address")
-        .withEndpointDirection(EndpointDirection.INCOMING)
-        .withEndpointType(EndpointTypeNames.DEFAULT_DIRECT_ENDPOINT);
-
-    Endpoint point = builder.getEndpointInstance(null, conf);
-    assertThat(point).isInstanceOf(DirectEndpoint.class);
+    MockNodeComplex subNode = ((MockNodeWithComponents) nodeInstance).getSimpleNode();
+    assertThat(subNode.getIntField()).isEqualTo(3);
+    assertThat(subNode.isBooleanField()).isEqualTo(true);
+    assertThat(subNode.getStringField()).isEqualTo("stringValue");
+    assertThat(subNode.getStrings()).containsExactly("one", "two", "three");
+    assertThat(subNode.getIntList()).containsOnly(4, 3, 2, 1, 0);
+    assertThat(subNode.remainsEmpty).isNullOrEmpty();
+    assertThat(subNode.accessible).isEqualTo("directlySet");
 
   }
+
 
 }

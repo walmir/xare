@@ -90,12 +90,4 @@ public class LoggerNode extends AbstractNode {
     }
   }
 
-  // protected Logger getLogger() {
-  // return logger;
-  // }
-  //
-  // protected void setLogger(Logger logger) {
-  // this.logger = logger;
-  // }
-
 }

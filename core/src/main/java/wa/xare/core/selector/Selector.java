@@ -1,9 +1,11 @@
 package wa.xare.core.selector;
 
 import io.vertx.core.json.JsonArray;
+import wa.xare.core.annotation.Component;
 import wa.xare.core.packet.Packet;
 import wa.xare.core.packet.PacketSegment;
 
+@Component(discriminator = "expressionLanguage")
 public interface Selector {
 
   /**

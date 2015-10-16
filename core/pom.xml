@@ -32,7 +32,7 @@
     <!--Dependency versions-->
     <vertx.version>3.0.0</vertx.version>
     <junit.version>4.11</junit.version>
-	<classpath.scanner.version>1.2.5</classpath.scanner.version>
+	<classpath.scanner.version>1.9.6</classpath.scanner.version>
 
     <!--Plugin versions-->
     <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>

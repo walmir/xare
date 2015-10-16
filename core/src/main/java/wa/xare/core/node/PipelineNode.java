@@ -1,15 +1,11 @@
 package wa.xare.core.node;
 
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import wa.xare.core.annotation.Field;
 import wa.xare.core.annotation.NodeType;
-import wa.xare.core.builder.NodeBuilder;
 import wa.xare.core.configuration.NodeConfiguration;
 import wa.xare.core.packet.Packet;
 import wa.xare.core.packet.ProcessingListener;
@@ -77,15 +73,15 @@ public class PipelineNode extends AbstractNode {
 
   @Override
   protected void doConfigure(NodeConfiguration configuration) {
-    JsonArray array = configuration.getJsonArray("nodes");
-    for (Object obj : array) {
-      if (obj instanceof JsonObject) {
-        NodeConfiguration config = new NodeConfiguration((JsonObject) obj);
-        Node node = NodeBuilder.getInstance().getNodeInstance(route,
-            config);
-        addNode(node);
-      }
-    }
+//    JsonArray array = configuration.getJsonArray("nodes");
+//    for (Object obj : array) {
+//      if (obj instanceof JsonObject) {
+//        NodeConfiguration config = new NodeConfiguration((JsonObject) obj);
+//        Node node = NodeDefinitionBuilder.getInstance().getNodeInstance(route,
+//            config);
+//        addNode(node);
+//      }
+//    }
   }
 
 }

@@ -21,7 +21,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import wa.xare.core.DefaultRoute;
-import wa.xare.core.builder.NodeBuilder;
+import wa.xare.core.builder.NodeDefinitionBuilder;
 import wa.xare.core.configuration.EndpointConfiguration;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -83,7 +83,7 @@ public class DirectEndpointTest {
     finalNode.setEndpointDirection(EndpointDirection.OUTGOING);
     finalNode.setEndpointType(EndpointTypeNames.DEFAULT_DIRECT_ENDPOINT);
 
-    Endpoint endpoint = NodeBuilder.getInstance().getEndpointInstance(
+    Endpoint endpoint = NodeDefinitionBuilder.getInstance().getEndpointInstance(
         defaultRoute, finalNode);
 
     assertThat(endpoint).isInstanceOf(DirectEndpoint.class);

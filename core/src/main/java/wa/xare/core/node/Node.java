@@ -1,12 +1,15 @@
 package wa.xare.core.node;
 
 import wa.xare.core.Route;
+import wa.xare.core.annotation.Component;
 import wa.xare.core.configuration.NodeConfiguration;
 import wa.xare.core.packet.Packet;
 import wa.xare.core.packet.ProcessingListener;
 
-
+@Component
 public interface Node {
+
+  final static String NODE_TYPE_FIELD = "type";
 
   void configure(Route route, NodeConfiguration configuration);
 

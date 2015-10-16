@@ -10,7 +10,7 @@ import wa.xare.core.packet.PacketBuilder;
 
 @EndpointType
 public class DirectEndpoint extends AbstractEndpoint {
-  // LoggerFactory.get
+
   private static final Logger LOGGER = LoggerFactory
       .getLogger(DirectEndpoint.class);
 

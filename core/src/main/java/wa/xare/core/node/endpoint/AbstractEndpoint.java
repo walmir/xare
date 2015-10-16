@@ -18,7 +18,6 @@ public abstract class AbstractEndpoint extends AbstractNode implements
 
 	private EndpointHandler handler;
 
-
   protected AbstractEndpoint(EndpointDirection direction) {
 		this.direction = direction;
 	}

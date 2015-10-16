@@ -5,6 +5,7 @@ import java.util.List;
 
 import wa.xare.core.ProcessingChain;
 import wa.xare.core.Route;
+import wa.xare.core.annotation.Field;
 import wa.xare.core.configuration.NodeConfiguration;
 import wa.xare.core.node.AbstractNode;
 import wa.xare.core.node.Node;
@@ -23,6 +24,7 @@ public abstract class DefaultSubRouteNode extends AbstractNode implements
 
   public static final String NODES_FIELD = "nodes";
 
+  @Field(NODES_FIELD)
   private PipelineNode pipeline;
 
   @Override

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wa.xare.core.Route;
+import wa.xare.core.annotation.Field;
+import wa.xare.core.annotation.RouteElement;
 import wa.xare.core.configuration.NodeConfiguration;
 import wa.xare.core.configuration.SelectorConfiguration;
 import wa.xare.core.packet.ProcessingListener;
@@ -14,8 +16,11 @@ import wa.xare.core.selector.SelectorBuilder;
 public abstract class AbstractNode implements Node {
 
 	private List<ProcessingListener> listeners;
+
+  @RouteElement
   protected Route route;
 
+  @Field
   private Selector selector;
 
 	public void setRoute(Route route) {

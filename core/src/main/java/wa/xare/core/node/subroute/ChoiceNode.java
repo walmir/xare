@@ -1,16 +1,11 @@
 package wa.xare.core.node.subroute;
 
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import wa.xare.core.annotation.Field;
 import wa.xare.core.annotation.NodeType;
-import wa.xare.core.builder.NodeBuilder;
-import wa.xare.core.builder.NodeConfigurationException;
 import wa.xare.core.configuration.NodeConfiguration;
 import wa.xare.core.node.Node;
 import wa.xare.core.node.PipelineNode;
@@ -71,40 +66,40 @@ public class ChoiceNode extends DefaultSubRouteNode {
 
   @Override
   protected void doConfigure(NodeConfiguration configuration) {
-    if (!configuration.containsKey(CASES_FIELD)) {
-      throw new NodeConfigurationException("choice", CASES_FIELD);
-    }
-
-    Object whereElement = configuration.getValue(CASES_FIELD);
-    if (whereElement instanceof JsonArray) {
-      ((JsonArray) whereElement).iterator().forEachRemaining(
-          caseNodeConfig -> {
-            NodeConfiguration filterConfig = new NodeConfiguration(
-                (JsonObject) caseNodeConfig);
-            filterConfig.setType("filter");
-            Node filter = NodeBuilder.getInstance().getNodeInstance(
-                route, filterConfig);
-            this.addNode(filter);
-          });
-    } else { // JsonObject
-      Node filter = NodeBuilder.getInstance().getNodeInstance(route,
-          new NodeConfiguration((JsonObject) whereElement));
-      this.addNode(filter);
-    }
-    if (configuration.containsKey(OTHERWISE_FIELD)) {
-      JsonArray otherwisePathConfig = configuration
-          .getJsonArray(OTHERWISE_FIELD);
-      if (otherwisePathConfig != null) {
-
-        // Build pipeline configuration
-        NodeConfiguration pipelineConfig = new NodeConfiguration();
-        pipelineConfig.setType(PipelineNode.TYPE);
-        pipelineConfig.put(NODES_FIELD, otherwisePathConfig);
-        PipelineNode pipeline = (PipelineNode) NodeBuilder
-            .getInstance().getNodeInstance(route, pipelineConfig);
-        this.setOtherwise(pipeline);
-      }
-    }
+    // if (!configuration.containsKey(CASES_FIELD)) {
+    // throw new NodeConfigurationException("choice", CASES_FIELD);
+    // }
+    //
+    // Object whereElement = configuration.getValue(CASES_FIELD);
+    // if (whereElement instanceof JsonArray) {
+    // ((JsonArray) whereElement).iterator().forEachRemaining(
+    // caseNodeConfig -> {
+    // NodeConfiguration filterConfig = new NodeConfiguration(
+    // (JsonObject) caseNodeConfig);
+    // filterConfig.setType("filter");
+    // Node filter = NodeDefinitionBuilder.getInstance().getNodeInstance(
+    // route, filterConfig);
+    // this.addNode(filter);
+    // });
+    // } else { // JsonObject
+    // Node filter = NodeDefinitionBuilder.getInstance().getNodeInstance(route,
+    // new NodeConfiguration((JsonObject) whereElement));
+    // this.addNode(filter);
+    // }
+    // if (configuration.containsKey(OTHERWISE_FIELD)) {
+    // JsonArray otherwisePathConfig = configuration
+    // .getJsonArray(OTHERWISE_FIELD);
+    // if (otherwisePathConfig != null) {
+    //
+    // // Build pipeline configuration
+    // NodeConfiguration pipelineConfig = new NodeConfiguration();
+    // pipelineConfig.setType(PipelineNode.TYPE);
+    // pipelineConfig.put(NODES_FIELD, otherwisePathConfig);
+    // PipelineNode pipeline = (PipelineNode) NodeDefinitionBuilder
+    // .getInstance().getNodeInstance(route, pipelineConfig);
+    // this.setOtherwise(pipeline);
+    // }
+    // }
 
   }
 

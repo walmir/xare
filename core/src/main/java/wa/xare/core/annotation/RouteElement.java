@@ -7,12 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Field {
+public @interface RouteElement {
 
-  String value() default "";
 
-  String type() default "string";
-
-  /** Defines if the field required. Default is false. */
-  boolean required() default false;
 }
