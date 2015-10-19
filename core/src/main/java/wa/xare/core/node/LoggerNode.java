@@ -81,13 +81,4 @@ public class LoggerNode extends AbstractNode {
 		super.setRoute(route);
 	}
 
-  @Override
-  protected void doConfigure(NodeConfiguration configuration) {
-    if (configuration.containsKey(LOG_LEVEL_FIELD)) {
-      setLevel(configuration.getString(LoggerNode.LOG_LEVEL_FIELD));
-    } else {
-      setLevel(DEFAULT_LOG_LEVEL);
-    }
-  }
-
 }

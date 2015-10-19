@@ -14,8 +14,6 @@ import wa.xare.core.packet.ProcessingResult;
 @NodeType
 public class PipelineNode extends AbstractNode {
 
-  public static final String TYPE = "pipeline";
-
   @Field(required = true)
   private List<Node> nodes;
 
@@ -44,6 +42,10 @@ public class PipelineNode extends AbstractNode {
 
   }
 
+  public void setNodes(List<Node> nodes) {
+    this.nodes = nodes;
+  }
+
   @Override
   public void startProcessing(Packet packet) {
     if (nodes != null && !nodes.isEmpty()) {
@@ -69,19 +71,6 @@ public class PipelineNode extends AbstractNode {
       return Collections.emptyList();
     }
     return nodes;
-  }
-
-  @Override
-  protected void doConfigure(NodeConfiguration configuration) {
-//    JsonArray array = configuration.getJsonArray("nodes");
-//    for (Object obj : array) {
-//      if (obj instanceof JsonObject) {
-//        NodeConfiguration config = new NodeConfiguration((JsonObject) obj);
-//        Node node = NodeDefinitionBuilder.getInstance().getNodeInstance(route,
-//            config);
-//        addNode(node);
-//      }
-//    }
   }
 
 }

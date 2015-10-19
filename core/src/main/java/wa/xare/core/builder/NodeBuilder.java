@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import wa.xare.core.Route;
 import wa.xare.core.annotation.Component;
 import wa.xare.core.node.Node;
+import wa.xare.core.node.PipelineNode;
 import wa.xare.core.node.endpoint.Endpoint;
 
 public class NodeBuilder {
@@ -51,53 +52,53 @@ public class NodeBuilder {
     String endpointType = configuration.getString(Endpoint.ENDPOINT_TYPE_FIELD);
 
     if (nodeDefinitionBuilder.getEndpointDefinition(endpointType) == null) {
-      throw new NodeConfigurationException("unkown endpoint class type: "
-          + endpointType);
+      throw new NodeConfigurationException("unkown endpoint class type: " + endpointType);
     }
 
-    NodeDefinition endpointDefinition = nodeDefinitionBuilder
-        .getEndpointDefinition(endpointType);
+    NodeDefinition endpointDefinition = nodeDefinitionBuilder.getEndpointDefinition(endpointType);
 
-    Endpoint endpoint = (Endpoint) createNodeInstance(endpointDefinition,
-        configuration);
+    Endpoint endpoint = (Endpoint) createNodeInstance(endpointDefinition, configuration);
 
     return endpoint;
   }
 
-  private Object createNodeInstance(NodeDefinition nodeDefinition,
-      JsonObject configuration) {
+  private Object createNodeInstance(NodeDefinition nodeDefinition, JsonObject configuration) {
     try {
       // Instantiate
       Object node = nodeDefinition.getNodeClass().newInstance();
 
-      Map<String, PropertyDescriptor> propertyDescriptorMap = Arrays.stream(
-          Introspector.getBeanInfo(nodeDefinition.getNodeClass())
-              .getPropertyDescriptors()).collect(
-          Collectors.toMap(PropertyDescriptor::getName, pd -> pd));
+      Map<String, PropertyDescriptor> propertyDescriptorMap =
+          Arrays.stream(Introspector.getBeanInfo(nodeDefinition.getNodeClass())
+              .getPropertyDescriptors()).collect(Collectors.toMap(PropertyDescriptor::getName, pd -> pd));
 
       // insert field vaues
-      insertFieldValues(node, nodeDefinition.getRequiredFields(),
-          configuration, propertyDescriptorMap, true);
-      insertFieldValues(node, nodeDefinition.getOptionalFields(),
-          configuration, propertyDescriptorMap, false);
+      insertFieldValues(node, nodeDefinition.getRequiredFields(), configuration, propertyDescriptorMap, true);
+      insertFieldValues(node, nodeDefinition.getOptionalFields(), configuration, propertyDescriptorMap, false);
 
       return node;
 
     } catch (InstantiationException | IllegalAccessException e) {
-      throw new NodeConfigurationException(
-          String.format("The node '%s' could not be instantiated"), e);
+      throw new NodeConfigurationException(String.format("The node '%s' could not be instantiated",
+          nodeDefinition.getNodeClass().getName()), e);
     } catch (IntrospectionException e1) {
       throw new NodeConfigurationException("unexpeted introsepction error", e1);
     }
   }
 
-  private Object getComponentInstance(String fieldName, Field field,
-      JsonObject configuration) {
+  /**
+   * Builds an instance for the given field.
+   * TODO: Simplify method. Too complex code.
+   *
+   * @param fieldName
+   * @param field
+   * @param configuration
+   * @return
+   */
+  private Object getComponentInstance(String fieldName, Field field, JsonObject configuration) {
 
     String discriminator = "type";
     String componentName = "";
-    Component componentAnnotation = field.getType().getAnnotation(
-        Component.class);
+    Component componentAnnotation = field.getType().getAnnotation(Component.class);
     if (componentAnnotation != null) {
       discriminator = componentAnnotation.discriminator();
       componentName = componentAnnotation.value();
@@ -105,40 +106,70 @@ public class NodeBuilder {
 
     if (componentName.trim().isEmpty()) {
       String simpleName = field.getType().getSimpleName();
-      componentName = simpleName.substring(0, 1).toLowerCase()
-          + simpleName.substring(1);
+      componentName = simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1);
     }
 
-    JsonObject componentConfig = configuration.getJsonObject(fieldName);
+    NodeDefinition componentDef;
+    JsonObject componentConfig = null;
+    String discriminatorValue = null;
 
-    String componentTypeName = componentConfig.getString(discriminator);
+    Object componentConfigValue = configuration.getValue(fieldName);
+    if (componentConfigValue instanceof JsonObject) {
+      componentConfig = ((JsonObject) componentConfigValue);
+      discriminatorValue = componentConfig.getString(discriminator);
+    }
 
-    NodeDefinition componentDef = null;
     if (Endpoint.class.isAssignableFrom(field.getType())) {
-      componentDef = nodeDefinitionBuilder
-          .getEndpointDefinition(componentTypeName);
+      componentDef = nodeDefinitionBuilder.getEndpointDefinition(discriminatorValue);
+    } else if (PipelineNode.class.isAssignableFrom(field.getType())) {
+      // Pipeline is a special case, since the configuration could be just an array of nodes
+      Object pipelineConfig = configuration.getValue(fieldName);
+      if (pipelineConfig instanceof JsonArray) {
+        componentConfig = new JsonObject();
+        componentConfig.put(discriminator, componentName); // type is pipeline
+        componentConfig.put("nodes", pipelineConfig);
+      }
+      componentDef = nodeDefinitionBuilder.getNodeDefinition(discriminatorValue);
     } else if (Node.class.isAssignableFrom(field.getType())) {
-      componentDef = nodeDefinitionBuilder.getNodeDefinition(componentTypeName);
+      if ((discriminatorValue == null || discriminatorValue.isEmpty())
+          && (!field.getType().isInterface() && !Modifier.isAbstract(field.getType().getModifiers()))) {
+        // If field type is a concrete node, no need for type value in config -> insert implicit value
+        discriminatorValue = componentName;
+        componentConfig.put(discriminator, discriminatorValue);
+      }
+      componentDef = nodeDefinitionBuilder.getNodeDefinition(discriminatorValue);
     } else {
       componentDef = nodeDefinitionBuilder.getComponentContainer(componentName)
-          .getComponentDefinition(componentTypeName);
+          .getComponentDefinition(discriminatorValue);
     }
 
     return createNodeInstance(componentDef, componentConfig);
   }
 
-  private void insertFieldValues(Object node, Map<String, Field> fields,
-      JsonObject configuration,
-      Map<String, PropertyDescriptor> propertyDescriptorMap, boolean required) {
+  @SuppressWarnings("unchecked")
+  private void insertFieldValues(Object node,
+                                 Map<String, Field> fields,
+                                 JsonObject configuration,
+                                 Map<String, PropertyDescriptor> propertyDescriptorMap,
+                                 boolean required) {
 
     for (String fieldName : fields.keySet()) {
       Field field = fields.get(fieldName);
       Object fieldValue = getFieldValue(fieldName, field, configuration);
+
       if (required && fieldValue == null) {
         throw new NodeConfigurationException(String.format(
             "value for required field '%s' is not defined", fieldName));
       }
+
       try {
+
+        // Check if enum
+        if (fieldValue != null && field.getType().isEnum()) {
+          String enumString = ((String) fieldValue).toUpperCase();
+          fieldValue = Enum.valueOf((Class<Enum>) field.getType(), enumString);
+        }
+
         if (Modifier.isPublic(field.getModifiers())) {
           field.set(node, configuration.getString(fieldName));
         } else {
@@ -167,8 +198,7 @@ public class NodeBuilder {
 
   }
 
-  private Object getFieldValue(String fieldName, Field field,
-      JsonObject configuration) {
+  private Object getFieldValue(String fieldName, Field field, JsonObject configuration) {
 
     Class<?> fieldType = field.getType();
     Object fieldValue = null;
@@ -212,6 +242,9 @@ public class NodeBuilder {
       } else if (Collections.class.isAssignableFrom(componentType)) {
         throw new NodeConfigurationException(
             "Collection nesting is currently not supported. Try array nesting, or a collection of arrays.");
+      } else if (Node.class.isAssignableFrom(componentType)) {
+        Node nodeInstance = getNodeInstance(jsonArray.getJsonObject(i));
+        Array.set(dst, i, nodeInstance);
       } else {
         Array.set(dst, i, jsonArray.getValue(i));
       }

@@ -5,6 +5,7 @@ import io.vertx.core.json.JsonObject;
 import wa.xare.core.DefaultRoute;
 import wa.xare.core.Route;
 import wa.xare.core.node.Node;
+import wa.xare.core.node.PipelineNode;
 import wa.xare.core.node.endpoint.Endpoint;
 import wa.xare.core.node.endpoint.EndpointDirection;
 
@@ -20,7 +21,6 @@ public class RouteBuilder {
     Route route = new DefaultRoute();
     NodeBuilder nodeBuilder = new NodeBuilder(route);
     
-
     // validate routeConfig
     // TODO: Build Json Configuration validation system.
 
@@ -29,25 +29,21 @@ public class RouteBuilder {
     if (fromConfig == null) {
       throw new RouteConfigurationException("no incoming endpoint defined.");
     }
+
     // Add implicit values for the incoming endpoint
     fromConfig.put("type", Endpoint.TYPE_NAME);
-    fromConfig
-        .put("direction", EndpointDirection.INCOMING.name().toLowerCase());
+    fromConfig.put("direction", EndpointDirection.INCOMING.name().toLowerCase());
     
     // Build main pipeline
-    JsonObject mainPipeline = new JsonObject();
-    mainPipeline.put("nodes", routeConfiguration.getJsonArray("nodes"));
+    JsonObject mainPipelineConfig = new JsonObject();
+    mainPipelineConfig.put("nodes", routeConfiguration.getJsonArray("nodes"));
     
     Endpoint fromEndpoint = nodeBuilder.getEndpointInstance(route, fromConfig);
-    Node piplineNode = nodeBuilder.getNodeInstance(route, mainPipeline);
+    PipelineNode piplineNode = (PipelineNode) nodeBuilder.getNodeInstance(mainPipelineConfig);
     
     route.setIncomingEndpoint(fromEndpoint);
+    route.setPipeline(piplineNode);
     
-    nodeBuilder.getNodeInstance(route, configuration)
-    
-    
-    // build main node pipeline
-
     return route;
   }
 

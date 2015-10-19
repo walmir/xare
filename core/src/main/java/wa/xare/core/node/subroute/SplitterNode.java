@@ -130,15 +130,4 @@ public class SplitterNode extends DefaultSubRouteNode {
     }
   }
 
-  @Override
-  protected void doConfigure(NodeConfiguration configuration) {
-    Optional<Integer> groupOption = Optional.ofNullable(configuration
-        .getInteger(GROUP_FIELD));
-    Optional<String> tokenOption = Optional.ofNullable(configuration
-        .getString(TOKEN_FIELD));
-
-    groupOption.ifPresent(this::setGroup);
-    tokenOption.ifPresent(this::setToken);
-  }
-
 }

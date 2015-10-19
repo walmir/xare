@@ -5,14 +5,14 @@ import wa.xare.core.packet.Packet;
 
 public interface Endpoint extends Node {
 
-  public static final String TYPE_NAME = "endpoint";
-  public static final String ENDPOINT_TYPE_FIELD = "endpointType";
+  String TYPE_NAME = "endpoint";
+  String ENDPOINT_TYPE_FIELD = "endpointType";
 
 	void deploy();
 
 	void setHandler(EndpointHandler handler);
 
-  public interface EndpointHandler {
+  interface EndpointHandler {
 
     void handleIncomingPacket(Packet packet);
 

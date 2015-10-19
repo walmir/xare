@@ -64,8 +64,8 @@ public class ChoiceNode extends DefaultSubRouteNode {
     otherwise = chain;
   }
 
-  @Override
-  protected void doConfigure(NodeConfiguration configuration) {
+//  @Override
+//  protected void doConfigure(NodeConfiguration configuration) {
     // if (!configuration.containsKey(CASES_FIELD)) {
     // throw new NodeConfigurationException("choice", CASES_FIELD);
     // }
@@ -100,7 +100,7 @@ public class ChoiceNode extends DefaultSubRouteNode {
     // this.setOtherwise(pipeline);
     // }
     // }
-
-  }
+//
+//  }
 
 }

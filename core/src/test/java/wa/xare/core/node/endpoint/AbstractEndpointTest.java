@@ -46,11 +46,6 @@ public class AbstractEndpointTest {
       protected void deliverOutgoingMessage(Object object) {
         // do nothing
       }
-
-      @Override
-      protected void doConfigure(NodeConfiguration configuration) {
-        // do nothing
-      }
     });
   }
 

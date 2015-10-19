@@ -96,12 +96,6 @@ public class HttpEndpoint extends AbstractEndpoint {
         host, path);
 	}
 
-	@Override
-  protected void doConfigure(NodeConfiguration configuration) {
-    // TODO Auto-generated method stub
-
-  }
-
   @Override
 	protected void deployAsOutgoingEndpoint() {
     client = route.getVertx().createHttpClient();

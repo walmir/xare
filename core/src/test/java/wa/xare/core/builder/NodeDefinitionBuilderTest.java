@@ -18,6 +18,8 @@ public class NodeDefinitionBuilderTest {
 
   @Test
   public void test() {
+    NodeDefinitionBuilder builder = NodeDefinitionBuilder.getInstance();
+    System.out.println(builder);
   }
 
 }

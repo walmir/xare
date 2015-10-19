@@ -9,9 +9,9 @@ import wa.xare.core.packet.ProcessingListener;
 @Component
 public interface Node {
 
-  final static String NODE_TYPE_FIELD = "type";
+  String NODE_TYPE_FIELD = "type";
 
-  void configure(Route route, NodeConfiguration configuration);
+//  void configure(Route route, NodeConfiguration configuration);
 
   void startProcessing(Packet packet);
 

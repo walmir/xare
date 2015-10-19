@@ -11,6 +11,8 @@ import java.util.List;
 import org.junit.Test;
 import org.mockito.InOrder;
 
+import wa.xare.core.builder.NodeBuilder;
+import wa.xare.core.builder.NodeDefinition;
 import wa.xare.core.configuration.NodeConfiguration;
 import wa.xare.core.packet.Packet;
 import wa.xare.core.packet.ProcessingResult;
@@ -19,8 +21,8 @@ public class PipelineNodeTest {
 
   @Test
   public void testConfigurePipelineNode() {
-    PipelineNode node = new PipelineNode();
-    node.configure(null, buildPipelineConfiguration());
+
+    PipelineNode node = (PipelineNode) new NodeBuilder(null).getNodeInstance(buildPipelineConfiguration());
 
     List<Node> nodes = node.getNodes();
     assertThat(nodes).hasSize(2);
@@ -77,11 +79,6 @@ public class PipelineNodeTest {
     public void startProcessing(Packet packet) {
       notifyProcessingListeners(ProcessingResult
           .successfulProcessingResult(packet));
-    }
-
-    @Override
-    protected void doConfigure(NodeConfiguration configuration) {
-      // TODO Auto-generated method stub
     }
 
   }

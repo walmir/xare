@@ -25,6 +25,22 @@ public abstract class AbstractEndpoint extends AbstractNode implements
   public AbstractEndpoint() {
   }
 
+  public EndpointDirection getDirection() {
+    return direction;
+  }
+
+  public void setDirection(EndpointDirection direction) {
+    this.direction = direction;
+  }
+
+  public String getAddress() {
+    return address;
+  }
+
+  public void setAddress(String address) {
+    this.address = address;
+  }
+
   @Override
 	public final void deploy() {
 		if (direction == null) {
@@ -79,13 +95,13 @@ public abstract class AbstractEndpoint extends AbstractNode implements
 		// else do nothing
 	}
 
-  @Override
-  public void configure(Route route, NodeConfiguration configuration) {
-    EndpointConfiguration config = new EndpointConfiguration(configuration);
-    this.direction = config.getEndpointDirection();
-    this.address = config.getEndpointAddress();
-
-    super.configure(route, configuration);
-  }
+//  @Override
+//  public void configure(Route route, NodeConfiguration configuration) {
+//    EndpointConfiguration config = new EndpointConfiguration(configuration);
+//    this.direction = config.getEndpointDirection();
+//    this.address = config.getEndpointAddress();
+//
+//    super.configure(route, configuration);
+//  }
 
 }

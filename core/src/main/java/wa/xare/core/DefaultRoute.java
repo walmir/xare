@@ -1,6 +1,7 @@
 package wa.xare.core;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
@@ -67,7 +68,15 @@ public class DefaultRoute extends AbstractVerticle implements Route {
     // RouteConfiguration config = new RouteConfiguration(config());
     // configureRoute(config);
 
+    JsonObject config = getVertx().getOrCreateContext().config();
+
     LOGGER.info("starting route " + name);
+    LOGGER.info(config);
+  }
+
+  @Override
+  public String getDeploymentId() {
+    return deploymentID();
   }
 
   private void endRoute(boolean success, Packet packet) {

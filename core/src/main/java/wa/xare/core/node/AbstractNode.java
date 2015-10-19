@@ -49,19 +49,19 @@ public abstract class AbstractNode implements Node {
 		}
 	}
 
-  @Override
-  public void configure(Route route, NodeConfiguration configuration) {
-    if (configuration.containsKey(NodeConfiguration.SELECTOR_CONFIG_FIELD)) {
-      SelectorConfiguration selectorConfig = new SelectorConfiguration(
-          configuration.getJsonObject(NodeConfiguration.SELECTOR_CONFIG_FIELD));
-      SelectorBuilder builder = new SelectorBuilder();
-      Selector selector = builder.buildSelector(selectorConfig);
-      this.setSelector(selector);
-    }
-    setRoute(route);
-    doConfigure(configuration);
-  }
+//  @Override
+//  public void configure(Route route, NodeConfiguration configuration) {
+//    if (configuration.containsKey(NodeConfiguration.SELECTOR_CONFIG_FIELD)) {
+//      SelectorConfiguration selectorConfig = new SelectorConfiguration(
+//          configuration.getJsonObject(NodeConfiguration.SELECTOR_CONFIG_FIELD));
+//      SelectorBuilder builder = new SelectorBuilder();
+//      Selector selector = builder.buildSelector(selectorConfig);
+//      this.setSelector(selector);
+//    }
+//    setRoute(route);
+//    doConfigure(configuration);
+//  }
 
-  protected abstract void doConfigure(NodeConfiguration configuration);
+//  protected abstract void doConfigure(NodeConfiguration configuration);
 
 }

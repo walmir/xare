@@ -23,12 +23,6 @@ public class MockEndpoint implements Endpoint {
   }
 
   @Override
-  public void configure(Route route, NodeConfiguration configuration) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
   public void startProcessing(Packet packet) {
     // TODO Auto-generated method stub
 

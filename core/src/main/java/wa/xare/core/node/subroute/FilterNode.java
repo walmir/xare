@@ -31,9 +31,4 @@ public class FilterNode extends DefaultSubRouteNode {
     return false;
 	}
 
-  @Override
-  protected void doConfigure(NodeConfiguration configuration) {
-    // Do nothing: Abstract node takes care of configuring the selector
-  }
-	
 }

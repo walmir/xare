@@ -61,12 +61,6 @@ public abstract class DefaultSubRouteNode extends AbstractNode implements
         .successfulProcessingResult(packet));
   }
 
-  @Override
-  public void configure(Route route, NodeConfiguration configuration) {
-    super.configure(route, configuration);
-
-  }
-
   abstract void doProcess(Packet packet);
 
 }

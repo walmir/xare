@@ -21,6 +21,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import wa.xare.core.DefaultRoute;
+import wa.xare.core.builder.NodeBuilder;
+import wa.xare.core.builder.NodeDefinition;
 import wa.xare.core.builder.NodeDefinitionBuilder;
 import wa.xare.core.configuration.EndpointConfiguration;
 
@@ -45,6 +47,7 @@ public class DirectEndpointTest {
   Logger logger;
 
   DirectEndpoint endpoint;
+  NodeBuilder builder;
 
   @Before
   public void prepareTest() {
@@ -53,6 +56,8 @@ public class DirectEndpointTest {
 
     endpoint = spy(new DirectEndpoint(EndpointDirection.INCOMING, address));
     endpoint.setRoute(defaultRoute);
+
+    builder = new NodeBuilder(null);
   }
 
   @Test
@@ -83,8 +88,7 @@ public class DirectEndpointTest {
     finalNode.setEndpointDirection(EndpointDirection.OUTGOING);
     finalNode.setEndpointType(EndpointTypeNames.DEFAULT_DIRECT_ENDPOINT);
 
-    Endpoint endpoint = NodeDefinitionBuilder.getInstance().getEndpointInstance(
-        defaultRoute, finalNode);
+    Endpoint endpoint = builder.getEndpointInstance(null, finalNode);
 
     assertThat(endpoint).isInstanceOf(DirectEndpoint.class);
     DirectEndpoint de = (DirectEndpoint) endpoint;

@@ -2,9 +2,12 @@ package wa.xare.core.builder.mocks;
 
 import wa.xare.core.annotation.Field;
 import wa.xare.core.annotation.NodeType;
+import wa.xare.core.node.Node;
+import wa.xare.core.packet.Packet;
+import wa.xare.core.packet.ProcessingListener;
 
 @NodeType
-public class MockNodeOnlyFields {
+public class MockNodeOnlyFields implements Node {
 
   public static final String NAMED_FIELD_NAME = "otherName";
 
@@ -62,7 +65,15 @@ public class MockNodeOnlyFields {
   public void setNamedField(String namedField) {
     this.namedField = namedField;
   }
-  
-  
 
+
+  @Override
+  public void startProcessing(Packet packet) {
+
+  }
+
+  @Override
+  public void addProcessingListener(ProcessingListener listener) {
+
+  }
 }

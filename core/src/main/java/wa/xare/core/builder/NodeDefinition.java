@@ -101,15 +101,6 @@ public class NodeDefinition {
     return nodeClass;
   }
 
-  public Node instantiateNode(Map<String, String> fieldValues) {
-
-    return null;
-  }
-
-  public Node instantiateNode(Map<String, String> fieldValues,
-      Map<String, String> selectorFieldValues) {
-    return null;
-  }
 
   // public Constructor<?> getConstructor() {
   // return constructor;

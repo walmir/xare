@@ -56,12 +56,4 @@ public class DirectEndpoint extends AbstractEndpoint {
 		}
   }
 
-  @Override
-  protected void doConfigure(NodeConfiguration configuration) {
-    // Do nothing, config is done in super::configure()
-    assert (this.direction != null) : "endpoint direction not set";
-    assert (this.address != null) : "endpoing address not set";
-  }
-
-
 }

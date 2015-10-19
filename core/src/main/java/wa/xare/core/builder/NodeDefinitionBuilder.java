@@ -39,13 +39,13 @@ public class NodeDefinitionBuilder {
 
     HashMap<String, Class<?>> nodeClassMap = scanner.getNodeClassMap();
     for (Entry<String, Class<?>> e : nodeClassMap.entrySet()) {
-      NodeDefinition def = new NodeDefinition(e.getClass());
+      NodeDefinition def = new NodeDefinition(e.getValue());
       nodeDefinitionMap.put(e.getKey(), def);
     }
 
     HashMap<String, Class<?>> endpointClassMap = scanner.getEndpointClassMap();
     for (Entry<String, Class<?>> e : endpointClassMap.entrySet()) {
-      NodeDefinition def = new NodeDefinition(e.getClass());
+      NodeDefinition def = new NodeDefinition(e.getValue());
       endpointDefinitionMap.put(e.getKey(), def);
     }
 
@@ -97,7 +97,7 @@ public class NodeDefinitionBuilder {
     return null;
   }
 
-  private String getNodeName(Class<?> c) {
+  private static String getNodeName(Class<?> c) {
     NodeType annotation = c.getAnnotation(NodeType.class);
     if (annotation.value() != null && !annotation.value().isEmpty()) {
       return annotation.value();
@@ -105,7 +105,7 @@ public class NodeDefinitionBuilder {
     return getNodeName(c, NODE_NAME_SUFFIX);
   }
 
-  private String getEndpointName(Class<?> c) {
+  private static String getEndpointName(Class<?> c) {
     EndpointType annotation = c.getAnnotation(EndpointType.class);
     if (annotation.value() != null && !annotation.value().isEmpty()) {
       return annotation.value();
@@ -113,7 +113,7 @@ public class NodeDefinitionBuilder {
     return getNodeName(c, ENDPOINT_NAME_SUFFIX);
   }
 
-  private String getComponentName(Class<?> c, String suffix) {
+  private static String getComponentName(Class<?> c, String suffix) {
     Component annotation = c.getAnnotation(Component.class);
     if (annotation.value() != null && !annotation.value().isEmpty()) {
       return annotation.value();
@@ -121,7 +121,7 @@ public class NodeDefinitionBuilder {
     return getNodeName(c, suffix);
   }
 
-  private String getNodeName(Class<?> c, String suffix) {
+  private static String getNodeName(Class<?> c, String suffix) {
     String simpleName = Introspector.decapitalize(c.getSimpleName());
     if (simpleName.endsWith(suffix)) {
       return simpleName.substring(0, simpleName.length() - suffix.length());

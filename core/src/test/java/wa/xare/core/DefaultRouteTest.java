@@ -96,11 +96,6 @@ public class DefaultRouteTest {
           .successfulProcessingResult(packet));
     }
 
-    @Override
-    protected void doConfigure(NodeConfiguration configuration) {
-      // TODO Auto-generated method stub
-    }
-
   }
 
   public class BadNode extends AbstractNode {
@@ -109,11 +104,6 @@ public class DefaultRouteTest {
     public void startProcessing(Packet packet) {
       notifyProcessingListeners(ProcessingResult.failedProcessingResult(packet,
           new Throwable("bad node does bad things")));
-    }
-
-    @Override
-    protected void doConfigure(NodeConfiguration configuration) {
-      // TODO Auto-generated method stub
     }
 
   }
