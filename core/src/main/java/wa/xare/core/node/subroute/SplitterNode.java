@@ -23,10 +23,10 @@ public class SplitterNode extends DefaultSubRouteNode {
   public static final String GROUP_FIELD = "group";
   public static final String TOKEN_FIELD = "token";
 
-  @Field(TOKEN_FIELD)
+  @Field(value = TOKEN_FIELD, required = false)
   private String token;
 
-  @Field(GROUP_FIELD)
+  @Field(value = GROUP_FIELD, required = false)
   private int group = 1;
 
   public int getGroup() {

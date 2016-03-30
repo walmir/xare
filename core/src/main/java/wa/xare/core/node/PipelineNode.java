@@ -14,7 +14,7 @@ import wa.xare.core.packet.ProcessingResult;
 @NodeType
 public class PipelineNode extends AbstractNode {
 
-  @Field(required = true)
+  @Field
   private List<Node> nodes;
 
   List<ProcessingListener> processingListeners;
@@ -39,6 +39,23 @@ public class PipelineNode extends AbstractNode {
       });
       nodes.add(node);
     }
+
+  }
+
+  @Override
+  public void initialize() {
+
+    nodes.stream().reduce(this, (n1, n2) -> {
+      n1.addProcessingListener(res -> {
+        if (res.isSuccessful()) {
+          n2.startProcessing(res.getResultingPacket());
+        } else {
+          notifyProcessingListeners(res);
+        }
+      });
+      n2.initialize();
+      return n2;
+    });
 
   }
 

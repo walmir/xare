@@ -21,6 +21,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import wa.xare.core.DefaultRoute;
+import wa.xare.core.Route;
+import wa.xare.core.builder.RouteBuilder;
+import wa.xare.core.builder.RouteConfigurationException;
 import wa.xare.core.configuration.EndpointConfiguration;
 import wa.xare.core.configuration.NodeConfiguration;
 import wa.xare.core.configuration.RouteConfiguration;
@@ -44,12 +47,12 @@ public class SplitterNodeIntegrationTest {
   Vertx vertx;
 
   @Before
-  public void before(TestContext context) {
+  public void before(TestContext context) throws RouteConfigurationException {
     vertx = Vertx.vertx();
     JsonObject rConfig = configureRoute();
-    DeploymentOptions options = new DeploymentOptions().setConfig(rConfig)
-        .setWorker(true);
-    vertx.deployVerticle(DefaultRoute.class.getName(), options,
+    RouteBuilder builder = new RouteBuilder();
+    Route route = builder.buildRoute(rConfig);
+    vertx.deployVerticle(route, new DeploymentOptions().setWorker(true),
         context.asyncAssertSuccess());
   }
 

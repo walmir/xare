@@ -11,10 +11,10 @@ import wa.xare.core.packet.ProcessingListener;
 @NodeType
 public class MockNodeWithComponents implements Node {
 
-  @Field(required = true)
+  @Field
   private IMockComponent component;
 
-  @Field
+  @Field(required = true)
   private MockNodeComplex simpleNode;
 
   public IMockComponent getComponent() {

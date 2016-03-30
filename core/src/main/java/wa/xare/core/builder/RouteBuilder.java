@@ -36,13 +36,15 @@ public class RouteBuilder {
     
     // Build main pipeline
     JsonObject mainPipelineConfig = new JsonObject();
+    mainPipelineConfig.put("type", "pipeline");
     mainPipelineConfig.put("nodes", routeConfiguration.getJsonArray("nodes"));
     
     Endpoint fromEndpoint = nodeBuilder.getEndpointInstance(route, fromConfig);
-    PipelineNode piplineNode = (PipelineNode) nodeBuilder.getNodeInstance(mainPipelineConfig);
-    
+    PipelineNode pipelineNode = (PipelineNode) nodeBuilder.getNodeInstance(mainPipelineConfig);
+
+
     route.setIncomingEndpoint(fromEndpoint);
-    route.setPipeline(piplineNode);
+    route.setPipeline(pipelineNode);
     
     return route;
   }

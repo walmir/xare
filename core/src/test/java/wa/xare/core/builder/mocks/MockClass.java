@@ -8,13 +8,13 @@ public class MockClass {
   public static final String OPTIONAL_FIELD_NAME = "optionalField";
   public static final String NAMED_FIELD_NAME = "differentName";
 
-  @Field(required = true)
+  @Field
   private String requiredField;
   
-  @Field 
+  @Field(required = false)
   private String optionalField;
   
-  @Field(NAMED_FIELD_NAME)
+  @Field(value = NAMED_FIELD_NAME, required = false)
   private String namedField;
 
   public String getRequiredField() {

@@ -14,6 +14,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import wa.xare.core.DefaultRoute;
+import wa.xare.core.Route;
+import wa.xare.core.builder.RouteBuilder;
+import wa.xare.core.builder.RouteConfigurationException;
 import wa.xare.core.configuration.EndpointConfiguration;
 import wa.xare.core.configuration.NodeConfiguration;
 import wa.xare.core.configuration.RouteConfiguration;
@@ -36,11 +39,15 @@ public class ChoiceNodeIntegrationTest {
   JsonObject obj3 = new JsonObject("{\"value\":3}");
 
   @Before
-  public void before(TestContext context) {
+  public void before(TestContext context) throws RouteConfigurationException {
     vertx = Vertx.vertx();
 
     JsonObject routeConfig = configureRoute();
-    vertx.deployVerticle(DefaultRoute.class.getName(), new DeploymentOptions()
+
+    RouteBuilder routeBuilder = new RouteBuilder();
+    Route route = routeBuilder.buildRoute(routeConfig);
+
+    vertx.deployVerticle(route, new DeploymentOptions()
         .setConfig(routeConfig).setWorker(true), context.asyncAssertSuccess());
   }
 
@@ -110,7 +117,7 @@ public class ChoiceNodeIntegrationTest {
     choiceConfig.put("otherwise", nodePathOtherwise);
 
     rConfig.addNodeConfiguration(choiceConfig);
-
+    System.out.printf(rConfig.toString());
     return rConfig;
   }
 

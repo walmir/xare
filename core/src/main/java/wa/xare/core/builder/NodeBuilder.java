@@ -12,10 +12,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import wa.xare.core.Route;
@@ -35,9 +32,17 @@ public class NodeBuilder {
   }
 
   public Node getNodeInstance(JsonObject configuration) {
+    return getNodeInstance(configuration, null);
+  }
+
+  private Node getNodeInstance(JsonObject configuration, Class<?> componentType) {
     String type = configuration.getString(Node.NODE_TYPE_FIELD);
     if ("endpoint".equals(type)) {
       return getEndpointInstance(route, configuration);
+    }
+
+    if (type == null && componentType != null) {
+      type = BuilderUtils.getNodeName(componentType);
     }
 
     NodeDefinition nodeDef = nodeDefinitionBuilder.getNodeDefinition(type);
@@ -58,6 +63,7 @@ public class NodeBuilder {
     NodeDefinition endpointDefinition = nodeDefinitionBuilder.getEndpointDefinition(endpointType);
 
     Endpoint endpoint = (Endpoint) createNodeInstance(endpointDefinition, configuration);
+    endpoint.setRoute(route);
 
     return endpoint;
   }
@@ -129,18 +135,30 @@ public class NodeBuilder {
         componentConfig.put(discriminator, componentName); // type is pipeline
         componentConfig.put("nodes", pipelineConfig);
       }
+      discriminatorValue = "pipeline";
+
       componentDef = nodeDefinitionBuilder.getNodeDefinition(discriminatorValue);
-    } else if (Node.class.isAssignableFrom(field.getType())) {
+    } else {
       if ((discriminatorValue == null || discriminatorValue.isEmpty())
           && (!field.getType().isInterface() && !Modifier.isAbstract(field.getType().getModifiers()))) {
         // If field type is a concrete node, no need for type value in config -> insert implicit value
         discriminatorValue = componentName;
+        assert componentConfig != null;
         componentConfig.put(discriminator, discriminatorValue);
       }
-      componentDef = nodeDefinitionBuilder.getNodeDefinition(discriminatorValue);
-    } else {
-      componentDef = nodeDefinitionBuilder.getComponentContainer(componentName)
-          .getComponentDefinition(discriminatorValue);
+
+      if (discriminatorValue == null) {
+        throw new NodeConfigurationException(
+            String.format("discriminator value for discriminator '%s', for component '%s', is not defined",
+                discriminator, componentName));
+      }
+
+      if (Node.class.isAssignableFrom(field.getType())) {
+        componentDef = nodeDefinitionBuilder.getNodeDefinition(discriminatorValue);
+      } else {
+        componentDef = nodeDefinitionBuilder.getComponentContainer(componentName)
+            .getComponentDefinition(discriminatorValue);
+      }
     }
 
     return createNodeInstance(componentDef, componentConfig);
@@ -157,15 +175,18 @@ public class NodeBuilder {
       Field field = fields.get(fieldName);
       Object fieldValue = getFieldValue(fieldName, field, configuration);
 
-      if (required && fieldValue == null) {
-        throw new NodeConfigurationException(String.format(
-            "value for required field '%s' is not defined", fieldName));
+      if (fieldValue == null) {
+        if (required) {
+          throw new NodeConfigurationException(String.format(
+              "value for required field '%s' is not defined", fieldName));
+        }
+        continue;
       }
 
       try {
 
         // Check if enum
-        if (fieldValue != null && field.getType().isEnum()) {
+        if (field.getType().isEnum()) {
           String enumString = ((String) fieldValue).toUpperCase();
           fieldValue = Enum.valueOf((Class<Enum>) field.getType(), enumString);
         }
@@ -222,7 +243,7 @@ public class NodeBuilder {
       fieldValue = configuration.getValue(fieldName);
     }
     return fieldValue;
-    }
+  }
 
   private Class<?> getParameterizedType(Field field) {
     return (Class<?>) ((ParameterizedType) field.getGenericType())
@@ -243,7 +264,7 @@ public class NodeBuilder {
         throw new NodeConfigurationException(
             "Collection nesting is currently not supported. Try array nesting, or a collection of arrays.");
       } else if (Node.class.isAssignableFrom(componentType)) {
-        Node nodeInstance = getNodeInstance(jsonArray.getJsonObject(i));
+        Node nodeInstance = getNodeInstance(jsonArray.getJsonObject(i), componentType);
         Array.set(dst, i, nodeInstance);
       } else {
         Array.set(dst, i, jsonArray.getValue(i));
@@ -251,6 +272,7 @@ public class NodeBuilder {
     }
     return dst;
   }
+
 
   private boolean isNodeComponent(Class<?> type) {
     if (type == null) {

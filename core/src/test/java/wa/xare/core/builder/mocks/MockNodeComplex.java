@@ -11,22 +11,22 @@ import wa.xare.core.packet.ProcessingListener;
 
 public class MockNodeComplex implements Node {
 
-  @Field
+  @Field(required = false)
   public String accessible;
 
-  @Field
+  @Field(required = false)
   public String remainsEmpty;
 
-  @Field(required = true)
+  @Field
   private String stringField;
 
-  @Field(required = true)
+  @Field
   private int intField;
 
-  @Field("bool")
+  @Field(value = "bool", required = false)
   private boolean booleanField;
 
-  @Field
+  @Field(required = false)
   private String[] strings;
 
   @Field(value = "theList", required = true)

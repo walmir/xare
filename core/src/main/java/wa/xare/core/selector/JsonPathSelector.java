@@ -11,8 +11,12 @@ import com.jayway.jsonpath.JsonPath;
 @SelectorType("jsonPath")
 public class JsonPathSelector extends AbstractSelector {
 
+  public JsonPathSelector() {
+
+  }
+
   public JsonPathSelector(String expression) {
-    super(expression);
+    this.setExpression(expression);
   }
 
   @Override

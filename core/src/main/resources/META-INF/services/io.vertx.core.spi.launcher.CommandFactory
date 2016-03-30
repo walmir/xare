@@ -1,0 +1,8 @@
+# Xare Commands
+wa.xare.core.cli.HelloCommandFactory
+wa.xare.core.cli.VersionCommandFactory
+wa.xare.core.cli.ListNodesCommandFactory
+
+
+# Core commands
+io.vertx.core.impl.launcher.commands.RunCommandFactory

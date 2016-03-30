@@ -1,10 +1,6 @@
 package wa.xare.core.node.endpoint;
 
-import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpMethod;
-import io.vertx.core.http.HttpServer;
-import io.vertx.core.http.HttpServerOptions;
-import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.http.*;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -12,7 +8,6 @@ import io.vertx.ext.web.handler.BodyHandler;
 import wa.xare.core.Route;
 import wa.xare.core.annotation.EndpointType;
 import wa.xare.core.annotation.Field;
-import wa.xare.core.configuration.NodeConfiguration;
 import wa.xare.core.packet.DefaultPacket;
 import wa.xare.core.packet.Packet;
 
@@ -27,7 +22,7 @@ public class HttpEndpoint extends AbstractEndpoint {
 
   @Field
   private String path;
-  
+
   @Field
   private String method = "GET";
 
@@ -119,7 +114,7 @@ public class HttpEndpoint extends AbstractEndpoint {
 
   private Packet buildPacket(RoutingContext ctx) {
     HttpServerRequest request = ctx.request();
-    
+
     Packet packet = new DefaultPacket();
     JsonObject packetBody = new JsonObject();
 
@@ -138,12 +133,12 @@ public class HttpEndpoint extends AbstractEndpoint {
       request.params().forEach(e -> params.put(e.getKey(), e.getValue()));
       packetBody.put("pathParameters", params);
     }
-    
+
     String bodyString = ctx.getBodyAsString();
     if (!bodyString.isEmpty()) {
       packetBody.put("requestBody", bodyString);
     }
-    
+
     packet.setBody(packetBody);
 
     return packet;

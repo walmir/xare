@@ -1,5 +1,7 @@
 package wa.xare.core.builder;
 
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
@@ -47,10 +49,10 @@ public class NodeDefinition {
     for (Field f : fields){
       wa.xare.core.annotation.Field annotation = f
           .getAnnotation(wa.xare.core.annotation.Field.class);
-      
+
       // Check if field is named in annotation
       String name = annotation.value().trim().isEmpty() ? f.getName() : annotation.value().trim();
-      
+
       if (annotation.required()) {
         requiredFields.put(name, f);
       } else {
@@ -77,7 +79,7 @@ public class NodeDefinition {
     }
     return fields;
   }
-  
+
   private List<Field> getAllAnnotatedComponentsFields(Class<?> type) {
     List<Field> fields = new ArrayList<>();
 
@@ -101,9 +103,37 @@ public class NodeDefinition {
     return nodeClass;
   }
 
+  public JsonObject getTemplate(){
+    JsonArray fields = new JsonArray();
+    for (Map.Entry<String, Field> entry : requiredFields.entrySet()) {
+      JsonObject field = new JsonObject();
+      field.put("name", entry.getKey());
+      field.put("type", entry.getValue().getType().getSimpleName().toLowerCase());
+      if (entry.getValue().getAnnotation(Component.class) != null){
+        field.put("category", "component");
+      } else {
+        field.put("category", "field");
+      }
+      field.put("required", true);
+      fields.add(field);
+    }
+
+    for (Map.Entry<String, Field> entry : optionalFields.entrySet()) {
+      JsonObject field = new JsonObject();
+      field.put("name", entry.getKey());
+      field.put("type", entry.getValue().getType().getSimpleName());
+      field.put("required", false);
+      fields.add(field);
+    }
+
+    JsonObject node = new JsonObject();
+    node.put("type", nodeClass.getSimpleName());
+    node.put("fields", fields);
+    return node;
+  }
 
   // public Constructor<?> getConstructor() {
   // return constructor;
   // }
-  
+
 }

@@ -7,7 +7,7 @@ public class SelectorConfiguration extends JsonObject {
 
   public static final String SEGMENT_FIELD = "segment";
   public static final String EXPRESSION_FIELD = "expression";
-  public static final String EXPRESSION_LANGUAGE_FIELD = "expression-language";
+  public static final String EXPRESSION_LANGUAGE_FIELD = "expressionLanguage";
 
   public static final String JSON_PATH_EXPRESSION_LANGUAGE = "jsonPath";
 

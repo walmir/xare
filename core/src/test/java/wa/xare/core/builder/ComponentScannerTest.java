@@ -55,8 +55,8 @@ public class ComponentScannerTest {
     assertThat(components.keySet()).contains("selector");
     assertThat(components.get("selector")).hasSize(1);
     assertThat(components.get("selector").keySet())
-        .contains("jsonPathSelector");
-    assertThat(components.get("selector").get("jsonPathSelector")).isEqualTo(
+        .contains("jsonPath");
+    assertThat(components.get("selector").get("jsonPath")).isEqualTo(
         JsonPathSelector.class);
   }
 

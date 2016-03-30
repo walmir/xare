@@ -24,7 +24,7 @@ public abstract class DefaultSubRouteNode extends AbstractNode implements
 
   public static final String NODES_FIELD = "nodes";
 
-  @Field(NODES_FIELD)
+  @Field(value = NODES_FIELD, required = false)
   private PipelineNode pipeline;
 
   @Override
@@ -59,6 +59,13 @@ public abstract class DefaultSubRouteNode extends AbstractNode implements
     doProcess(packet);
     notifyProcessingListeners(ProcessingResult
         .successfulProcessingResult(packet));
+  }
+
+  @Override
+  public void initialize() {
+    if (pipeline != null) {
+      pipeline.initialize();
+    }
   }
 
   abstract void doProcess(Packet packet);

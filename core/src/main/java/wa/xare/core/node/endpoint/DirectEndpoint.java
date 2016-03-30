@@ -4,7 +4,6 @@ package wa.xare.core.node.endpoint;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import wa.xare.core.annotation.EndpointType;
-import wa.xare.core.configuration.NodeConfiguration;
 import wa.xare.core.packet.Packet;
 import wa.xare.core.packet.PacketBuilder;
 

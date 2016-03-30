@@ -19,7 +19,7 @@ public class ChoiceNode extends DefaultSubRouteNode {
   public static final String CASES_FIELD = "cases";
   public static final String OTHERWISE_FIELD = "otherwise";
 
-  @Field(CASES_FIELD)
+  @Field(value = CASES_FIELD, required = false)
   private List<FilterNode> whereNodes;
 
   @Field(OTHERWISE_FIELD)
@@ -30,12 +30,16 @@ public class ChoiceNode extends DefaultSubRouteNode {
     otherwise = new PipelineNode();
   }
 
-  public ChoiceNode(PipelineNode otherwiseChain) {
-    if (otherwise == null) {
-      throw new IllegalArgumentException(
-          "'otherwise' node chain cannot be null");
-    }
-    otherwise = otherwiseChain;
+  public List<FilterNode> getWhereNodes() {
+    return whereNodes;
+  }
+
+  public void setWhereNodes(List<FilterNode> whereNodes) {
+    this.whereNodes = whereNodes;
+  }
+
+  public PipelineNode getOtherwise() {
+    return otherwise;
   }
 
   @Override
@@ -64,7 +68,14 @@ public class ChoiceNode extends DefaultSubRouteNode {
     otherwise = chain;
   }
 
-//  @Override
+  @Override
+  public void initialize() {
+    super.initialize();
+    otherwise.initialize();
+    whereNodes.forEach(Node::initialize);
+  }
+
+  //  @Override
 //  protected void doConfigure(NodeConfiguration configuration) {
     // if (!configuration.containsKey(CASES_FIELD)) {
     // throw new NodeConfigurationException("choice", CASES_FIELD);

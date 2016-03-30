@@ -18,7 +18,7 @@ import wa.xare.core.node.endpoint.Endpoint;
 /**
  * Functions as a wrapper for {@link FastClasspathScanner} and exposes
  * functionality to scan for Nodes, Endpoints and other Node-Components.
- * 
+ *
  * @author Wajdi
  *
  */
@@ -132,9 +132,9 @@ public class ComponentScanner {
 
     FastClasspathScanner scanner = new FastClasspathScanner();
     for (Class<?> componentClass : componentList) {
-      String groupName = getComponentName(componentClass, "");
+      final String groupName = getComponentName(componentClass, "");
       if (!map.containsKey(componentClass)) {
-        map.put(groupName, new HashMap<String, Class<?>>());
+        map.put(groupName, new HashMap<>());
       }
       if (componentClass.isInterface()) {
         // Scan
@@ -180,8 +180,8 @@ public class ComponentScanner {
         && !annotation.value().isEmpty()) {
       return annotation.value();
     }
-    String simpleName = Introspector.decapitalize(c.getSimpleName());
-    if (simpleName.endsWith(suffix)) {
+    String simpleName = BuilderUtils.decapitalize(c.getSimpleName());
+    if (simpleName.toLowerCase().endsWith(suffix.toLowerCase())) {
       return simpleName.substring(0, simpleName.length() - suffix.length());
     }
     return simpleName;

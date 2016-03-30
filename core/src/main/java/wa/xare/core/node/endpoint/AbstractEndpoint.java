@@ -1,16 +1,13 @@
 package wa.xare.core.node.endpoint;
 
-import wa.xare.core.Route;
 import wa.xare.core.annotation.Field;
-import wa.xare.core.configuration.EndpointConfiguration;
-import wa.xare.core.configuration.NodeConfiguration;
 import wa.xare.core.node.AbstractNode;
 import wa.xare.core.packet.Packet;
 
 public abstract class AbstractEndpoint extends AbstractNode implements
     Endpoint {
 
-  @Field
+  @Field(required = false)
 	protected EndpointDirection direction;
 
   @Field
@@ -65,7 +62,7 @@ public abstract class AbstractEndpoint extends AbstractNode implements
 	/**
 	 * Sets up the Endpoint as an Outgoing Endpoint. Configuration parameters
 	 * required by this method have to be provided to the constructor.
-	 * 
+	 *
 	 * @see #deployAsIncomingEndpoint()
 	 */
 	protected abstract void deployAsOutgoingEndpoint();
@@ -73,7 +70,7 @@ public abstract class AbstractEndpoint extends AbstractNode implements
 	/**
 	 * Sets up the Endpoint as an Incoming Endpoint. Configuration parameters
 	 * required by this method have to be provided to the constructor.
-	 * 
+	 *
 	 * @see #deployAsOutgoingEndpoint()
 	 */
 	protected abstract void deployAsIncomingEndpoint();
@@ -94,14 +91,5 @@ public abstract class AbstractEndpoint extends AbstractNode implements
 		}
 		// else do nothing
 	}
-
-//  @Override
-//  public void configure(Route route, NodeConfiguration configuration) {
-//    EndpointConfiguration config = new EndpointConfiguration(configuration);
-//    this.direction = config.getEndpointDirection();
-//    this.address = config.getEndpointAddress();
-//
-//    super.configure(route, configuration);
-//  }
 
 }

@@ -4,14 +4,13 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-
-import java.util.List;
-
 import wa.xare.core.annotation.Field;
 import wa.xare.core.node.Node;
 import wa.xare.core.node.PipelineNode;
 import wa.xare.core.node.endpoint.Endpoint;
 import wa.xare.core.packet.Packet;
+
+import java.util.List;
 
 public class DefaultRoute extends AbstractVerticle implements Route {
 
@@ -63,20 +62,36 @@ public class DefaultRoute extends AbstractVerticle implements Route {
     return name;
   }
 
+  public void setPipeline(PipelineNode pipeline) {
+    this.pipeline = pipeline;
+  }
+
   @Override
   public void start() {
-    // RouteConfiguration config = new RouteConfiguration(config());
-    // configureRoute(config);
-
     JsonObject config = getVertx().getOrCreateContext().config();
-
     LOGGER.info("starting route " + name);
-    LOGGER.info(config);
+    LOGGER.debug(config);
+    initRoute();
+  }
+
+  @Override
+  public void stop() throws Exception {
+    super.stop();
   }
 
   @Override
   public String getDeploymentId() {
     return deploymentID();
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return super.equals(obj);
   }
 
   private void endRoute(boolean success, Packet packet) {
@@ -87,73 +102,15 @@ public class DefaultRoute extends AbstractVerticle implements Route {
     }
   }
 
-  // private void configureRoute(RouteConfiguration routeConfig) {
-  // name = routeConfig.getName();
-  //
-  // List<NodeConfiguration> nodeConfigs = routeConfig.getNodeConfigurations();
-  // configureNodes(nodeConfigs);
-  //
-  // pipeline.addProcessingListener(result -> {
-  // endRoute(result.isSuccessful(), result.getResultingPacket());
-  // });
-  //
-  // EndpointConfiguration inpointConfig = routeConfig
-  // .getIncomingEndpointConfiguration();
-  //
-  // if (inpointConfig != null) {
-  // configureIncomingEndpoint(inpointConfig);
-  // } // TODO: else consider throwing exception
-  // }
-
-  // private void configureNodes(List<NodeConfiguration> nodeConfigs) {
-  // // NodeBuilder builder = new NodeBuilder(this);
-  // // for (NodeConfiguration nc : nodeConfigs) {
-  // // logger.info("Node " + nc);
-  // // this.addNode(builder.buildNode(nc));
-  // // }
-  // NodeDefinitionBuilder builder = NodeDefinitionBuilder.getInstance();
-  // for (NodeConfiguration nc : nodeConfigs) {
-  // Node n = builder.getNodeInstance(this, nc);
-  // this.addNode(n);
-  // }
-  // }
-
-  // private void configureIncomingEndpoint(EndpointConfiguration inpointConfig)
-  // {
-  // inpointConfig.setEndpointDirection(EndpointDirection.INCOMING);
-  // inpointConfig.setType("endpoint");
-  //
-  // incomingEndpoint = NodeDefinitionBuilder.getInstance()
-  // .getEndpointInstance(this, inpointConfig);
-  //
-  // // this.incomingEndpoint = endpointBuilder.buildEndpoint(inpointConfig);
-  // if (incomingEndpoint != null) {
-  // if (pipeline == null) {
-  // throw new IllegalStateException("processing chain cannot be null");
-  // }
-  // incomingEndpoint.setRoute(this);
-  // incomingEndpoint.setHandler(pipeline::startProcessing);
-  // incomingEndpoint.deploy();
-  // }
-  // }
-
-  public void setPipeline(PipelineNode pipeline) {
-    this.pipeline = pipeline;
+  private void initRoute() {
+    incomingEndpoint.deploy();
+    incomingEndpoint.setHandler(pipeline::startProcessing);
+    pipeline.addProcessingListener(result -> endRoute(result.isSuccessful(), result.getResultingPacket()));
+    pipeline.initialize();
   }
 
-  @Override
-  public void stop() throws Exception {
-    super.stop();
-  }
 
-  // @Override
-  // public HttpServer getServer() {
-  // if (server == null) {
-  // server = vertx.createHttpServer();
-  // }
-  // return server;
-  // }
-  
-  
+
+
 
 }
