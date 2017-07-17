@@ -7,6 +7,8 @@ import wa.xare.core.node.endpoint.Endpoint;
 
 public interface Route extends Verticle {
 
+  void setName(String name);
+
 	void setIncomingEndpoint(Endpoint incomingEndpoint);
 
   void setPipeline(PipelineNode pipeline);

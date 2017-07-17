@@ -1,21 +1,19 @@
 package wa.xare.core;
 
-import io.vertx.core.*;
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.DeploymentOptions;
+import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.DeliveryOptions;
-import io.vertx.core.eventbus.Message;
-import io.vertx.core.eventbus.impl.MessageImpl;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
-import io.vertx.rx.java.RxHelper;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnit;
 import wa.xare.core.configuration.EndpointConfiguration;
 import wa.xare.core.configuration.NodeConfiguration;
 import wa.xare.core.configuration.RouteConfiguration;
@@ -23,11 +21,6 @@ import wa.xare.core.node.LoggerNode;
 import wa.xare.core.node.endpoint.EndpointDirection;
 import wa.xare.core.node.endpoint.EndpointTypeNames;
 
-import javax.sql.XAConnection;
-
-/**
- * Created by wajdi on 18/10/15.
- */
 @RunWith(VertxUnitRunner.class)
 public class XareCoreVerticleTest extends TestCase {
 
@@ -68,6 +61,8 @@ public class XareCoreVerticleTest extends TestCase {
     Async async = context.async();
 
     JsonObject routeConfig = configureRoute();
+
+    System.out.println(routeConfig.encodePrettily());
 
     DeliveryOptions options = new DeliveryOptions().addHeader("command", "add");
     vertx.eventBus().send(XareCoreVerticle.DEFAULT_ADDRESS, routeConfig, options,

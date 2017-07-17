@@ -9,12 +9,13 @@ import io.vertx.core.cli.annotations.Name;
 import io.vertx.core.cli.annotations.Option;
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.spi.launcher.DefaultCommand;
 import wa.xare.core.XareCoreVerticle;
 
 @Name("listNodes")
-public class ListNodesCommand extends DefaultCommand {
+public class ListNodesCommand extends XareDefaultCommand {
 
   private String address;
 
@@ -24,32 +25,47 @@ public class ListNodesCommand extends DefaultCommand {
     this.address = address;
   }
 
+//  @Override
+//  public void run() throws CLIException {
+//    JsonObject command = new JsonObject();
+//
+//    DeliveryOptions opts = new DeliveryOptions();
+//    opts.addHeader("command", "listNodes");
+//
+//    VertxOptions options = new VertxOptions();
+//
+//    Vertx.clusteredVertx(options, res -> {
+//      if (res.succeeded()) {
+//        Vertx vertx = res.result();
+//        EventBus eventBus = vertx.eventBus();
+//        eventBus.send(address, command, opts, resp -> {
+//          if (resp.succeeded()) {
+//            System.out.println("results:" + resp.result().body());
+//          } else {
+//            System.out.println(resp.cause().getMessage());
+//          }
+//          vertx.close();
+//        });
+//        System.out.println("We now have a clustered event bus: " + eventBus);
+//      } else {
+//        System.out.println("Failed: " + res.cause().getMessage());
+//      }
+//    });
+//
+//  }
+
+//  @Override
+  protected Object buildMessage() {
+    return null;
+  }
+
   @Override
-  public void run() throws CLIException {
-    JsonObject command = new JsonObject();
+  protected void handleCommandResponse(Message<Object> result) {
 
-    DeliveryOptions opts = new DeliveryOptions();
-    opts.addHeader("command", "listNodes");
+  }
 
-    VertxOptions options = new VertxOptions();
-
-    Vertx.clusteredVertx(options, res -> {
-      if (res.succeeded()) {
-        Vertx vertx = res.result();
-        EventBus eventBus = vertx.eventBus();
-        eventBus.send(address, command, opts, resp -> {
-          if (resp.succeeded()) {
-            System.out.println("results:" + resp.result().body());
-          } else {
-            System.out.println(resp.cause().getMessage());
-          }
-          vertx.close();
-        });
-        System.out.println("We now have a clustered event bus: " + eventBus);
-      } else {
-        System.out.println("Failed: " + res.cause().getMessage());
-      }
-    });
+  @Override
+  protected void handleFailedCommand(Throwable cause) {
 
   }
 }

@@ -19,7 +19,7 @@
         <module.name>${project.groupId}~${project.artifactId}~${project.version}</module.name>
 
         <!--Dependency versions-->
-        <vertx.version>3.1.0</vertx.version>
+        <vertx.version>3.2.1</vertx.version>
         <hazelcast.version>3.2.1</hazelcast.version>
         <junit.version>4.11</junit.version>
         <classpath.scanner.version>1.9.6</classpath.scanner.version>
@@ -64,7 +64,16 @@
             <artifactId>vertx-hazelcast</artifactId>
             <version>${hazelcast.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-sync</artifactId>
+            <version>${vertx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-web</artifactId>
+            <version>${vertx.version}</version>
+        </dependency>
 
         <!-- classpath scanner -->
         <dependency>
@@ -72,6 +81,14 @@
             <artifactId>fast-classpath-scanner</artifactId>
             <version>${classpath.scanner.version}</version>
         </dependency>
+
+        <!-- Shiro -->
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+            <version>1.2.5</version>
+        </dependency>
+
 
         <!--Test dependencies-->
         <dependency>

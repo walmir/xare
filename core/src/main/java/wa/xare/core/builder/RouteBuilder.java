@@ -20,7 +20,7 @@ public class RouteBuilder {
 
     Route route = new DefaultRoute();
     NodeBuilder nodeBuilder = new NodeBuilder(route);
-    
+
     // validate routeConfig
     // TODO: Build Json Configuration validation system.
 
@@ -30,22 +30,25 @@ public class RouteBuilder {
       throw new RouteConfigurationException("no incoming endpoint defined.");
     }
 
+    // Add name
+    route.setName(routeConfiguration.getString("names"));
+
     // Add implicit values for the incoming endpoint
     fromConfig.put("type", Endpoint.TYPE_NAME);
     fromConfig.put("direction", EndpointDirection.INCOMING.name().toLowerCase());
-    
+
     // Build main pipeline
     JsonObject mainPipelineConfig = new JsonObject();
     mainPipelineConfig.put("type", "pipeline");
     mainPipelineConfig.put("nodes", routeConfiguration.getJsonArray("nodes"));
-    
+
     Endpoint fromEndpoint = nodeBuilder.getEndpointInstance(route, fromConfig);
     PipelineNode pipelineNode = (PipelineNode) nodeBuilder.getNodeInstance(mainPipelineConfig);
 
 
     route.setIncomingEndpoint(fromEndpoint);
     route.setPipeline(pipelineNode);
-    
+
     return route;
   }
 

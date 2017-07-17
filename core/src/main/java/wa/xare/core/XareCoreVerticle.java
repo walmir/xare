@@ -9,6 +9,7 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import wa.xare.core.builder.*;
 import wa.xare.core.exception.InvalidRouteConfigurationException;
+import wa.xare.core.web.XareWebVerticle;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -19,9 +20,15 @@ public class XareCoreVerticle extends AbstractVerticle {
   private static final Logger LOGGER = LoggerFactory.getLogger(XareCoreVerticle.class);
   public static final String DEFAULT_ADDRESS = "io.xare.core";
 
+  private String webDeploymentId;
+
+  private boolean webApiEnabled = true;
+
   private RouteBuilder routeBuilder;
   private Map<String, JsonObject> routeConfigMap;
   private Map<String, List<String>> deploymentsMap;
+
+
 
   @Override
   public void start() throws Exception {
@@ -32,7 +39,22 @@ public class XareCoreVerticle extends AbstractVerticle {
 
     this.getVertx().eventBus().consumer(DEFAULT_ADDRESS, this::handleCommand);
     System.out.println("clusterd: " + this.getVertx().isClustered());
-    LOGGER.info(String.format("starting core verticle. Listening at '%s'", DEFAULT_ADDRESS));
+    LOGGER.info("starting core verticle. Listening at " + DEFAULT_ADDRESS);
+
+    DeploymentOptions deploymentOptions = new DeploymentOptions();
+    deploymentOptions.setWorker(true);
+
+    LOGGER.info("Deploying web verticle.");
+    this.getVertx().deployVerticle(new XareWebVerticle(),  new DeploymentOptions().setWorker(false), res -> {
+      if (res.succeeded()) {
+        webDeploymentId = res.result();
+        LOGGER.info("Deploying web verticle completed. Deployment ID: " + res.result());
+      } else {
+        LOGGER.info("Web verticle failed:", res.cause());
+      }
+    });
+
+
   }
 
   @Override
@@ -45,34 +67,34 @@ public class XareCoreVerticle extends AbstractVerticle {
     LOGGER.info("received command: " + command);
 
     switch (command) {
-      case "removeRoute": // removes a non-deployed route config
+      case Commands.REMOVE_ROUTE: // removes a non-deployed route config
         removeRoute(message);
         break;
-      case "listDeployments": // lists all deployed routes by name and deployment ID
+      case Commands.LIST_DEPLOYMENTS: // lists all deployed routes by name and deployment ID
         listDeployments(message);
         break;
-      case "listComponents": // list all known components. Same consideration as above.
+      case Commands.LIST_COMPONENTS: // list all known components. Same consideration as above.
         listComponents(message);
         break;
-      case "undeploy": // undeploys a route by deployment ID
+      case Commands.UNDEPLOY: // undeploys a route by deployment ID
         undeployRoute(message);
         break;
-      case "showRouteConfiguration": // show route json description
+      case Commands.SHOW_ROUTE_CONFIGURATION: // show route json description
         showRouteConfig(message);
         break;
-      case "describeNode": // show node Json template
+      case Commands.DESCRIBE_NODE: // show node Json template
         describeNode(message);
         break;
-      case "listNodes": // list all known nodes, that can be used in a route. Consider also list node packets or groups.
+      case Commands.LIST_NODES: // list all known nodes, that can be used in a route. Consider also list node packets or groups.
         listNodes(message);
         break;
-      case "deploy": // deploy a route by route name, or by new route config. That way the route is added and deployed.
+      case Commands.DEPLOY: // deploy a route by route name, or by new route config. That way the route is added and deployed.
         deployRoute(message);
         break;
-      case "add": // adds a new route but does not deploy it.
+      case Commands.ADD: // adds a new route but does not deploy it.
         addRoute(message);
         break;
-      case "listRoutes": // lists all available routes by name
+      case Commands.LIST_ROUTES: // lists all available routes by name
         listRoutes(message);
         break;
       default:
@@ -211,7 +233,7 @@ public class XareCoreVerticle extends AbstractVerticle {
 
   protected void listRoutes(Message<JsonObject> message) {
     if (routeConfigMap.isEmpty()){
-      message.reply("no routes available");
+      message.reply(createSuccessfulResponse("routes", "no routes available"));
     } else {
       List<String> routeNameList = routeConfigMap.keySet().stream().collect(Collectors.toList());
       JsonArray routeNames = new JsonArray(routeNameList);
@@ -221,25 +243,25 @@ public class XareCoreVerticle extends AbstractVerticle {
   }
 
   protected void addRoute(Message<JsonObject> message) {
-    JsonObject routeConfig = message.body();
+    JsonObject routeConfig = message.body().getJsonObject("body");
 
     try {
       validateRouteConfig(routeConfig);
     } catch (InvalidRouteConfigurationException ex) {
-      LOGGER.debug("route configuration invalid", ex);
-      message.reply(ex.getMessage());
+      LOGGER.warn("route configuration invalid", ex);
+      message.reply(createFailedResponse(ex.getMessage()));
     }
 
     String routeName = routeConfig.getString("name");
     routeConfigMap.put(routeName, routeConfig);
 
-    message.reply("route configuration added");
+    message.reply(createSuccessfulResponse("message", "route configuration was added"));
   }
 
   protected void deployRoute(Message<JsonObject> message) {
 
     try {
-      String routeName = getField(message, "name");
+      String routeName = getField(message, "routeName");
       JsonObject routeConfig = getRouteConfig(routeName);
       Route route = routeBuilder.buildRoute(routeConfig);
       getVertx().deployVerticle(route, new DeploymentOptions().setWorker(true), event -> {
@@ -313,9 +335,25 @@ public class XareCoreVerticle extends AbstractVerticle {
 
   private String getField(Message<JsonObject> message, String fieldName) throws CommandExecutionException {
     if (!message.body().containsKey(fieldName)) {
-      throw new CommandExecutionException("field not defined: " + fieldName);
+      throw new CommandExecutionException("url parameter not set: " + fieldName);
     }
 
     return message.body().getString(fieldName);
+  }
+
+
+  public static class Commands {
+    public static final String LIST_DEPLOYMENTS = "listDeployments";
+    public static final String REMOVE_ROUTE = "removeRoute";
+    public static final String LIST_COMPONENTS = "listComponents";
+    public static final String UNDEPLOY = "undeploy";
+    public static final String SHOW_ROUTE_CONFIGURATION = "showRouteConfiguration";
+    public static final String DESCRIBE_NODE = "describeNode";
+    public static final String LIST_NODES = "listNodes";
+    public static final String DEPLOY = "deploy";
+    public static final String ADD = "add";
+    public static final String LIST_ROUTES = "listRoutes";
+
+    private Commands() {}
   }
 }

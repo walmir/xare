@@ -17,7 +17,11 @@ public class DefaultRoute extends AbstractVerticle implements Route {
   private static final Logger LOGGER = LoggerFactory
       .getLogger(DefaultRoute.class);
 
+  @Field("name")
   private String name;
+
+  @Field(value = "version", required = false)
+  private String version;
 
   @Field("from")
   private Endpoint incomingEndpoint;
